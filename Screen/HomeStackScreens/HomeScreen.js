@@ -21,6 +21,7 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import IncorNoteScreen from './IncorNoteScreen';
 
 const HomeScreen = ({navigation}) => {
   const [userData, setUserData] = useState({
@@ -114,6 +115,8 @@ const HomeScreen = ({navigation}) => {
         // If server response message same as Data Matched
         if (responseJson.status === 'success') {
           setWorkbookData(responseJson.data.bookInfo);
+        } else if (responseJson.status === 'null') {
+          setWorkbookData([]);
         }
       })
       .catch((error) => {
@@ -137,6 +140,8 @@ const HomeScreen = ({navigation}) => {
         // If server response message same as Data Matched
         if (responseJson.status === 'success') {
           setAcabookData(responseJson.data.bookInfo);
+        } else if (responseJson.status === 'null') {
+          setAcabookData([]);
         }
       })
       .catch((error) => {
@@ -160,6 +165,8 @@ const HomeScreen = ({navigation}) => {
         // If server response message same as Data Matched
         if (responseJson.status === 'success') {
           setIncornoteData(responseJson.data.bookInfo);
+        } else if (responseJson.status === 'null') {
+          setIncornoteData([]);
         }
       })
       .catch((error) => {
@@ -169,7 +176,7 @@ const HomeScreen = ({navigation}) => {
       });
   };
   const consolelogData = async () => {
-    await console.log(workbookData);
+    await console.log(incornoteData.note_sn);
   };
   //assemble multi Apifetch functions
   const getMultidata = async () => {
@@ -178,8 +185,8 @@ const HomeScreen = ({navigation}) => {
     await getWorkbookdata(userId);
     await getAcabookdata(userId);
     await getIncornotedata(userId);
-    // await consolelogData();
-    await console.log(Object.values(workbookData));
+    await consolelogData();
+    // await console.log(Object.values(workbookData));
     await setLoading(false);
   };
 
@@ -351,7 +358,7 @@ const HomeScreen = ({navigation}) => {
             data={Object.values(acabookData)}
             renderItem={academyItems}
             keyExtractor={(item, index) => index.toString()}
-            ListFooterComponent={plusNote()}
+            ListFooterComponent={plusBook()}
           />
         </View>
 

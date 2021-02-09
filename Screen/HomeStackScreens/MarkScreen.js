@@ -60,7 +60,7 @@ const MarkScreen = ({route, navigation}) => {
       <React.Fragment>
         <Image source={{uri: data.croppedImage}} style={styles.preview} />
         <TouchableOpacity onPress={handleOnPressRetry} style={styles.button}>
-          <Text style={styles.buttonText}>Retry</Text>
+          <Text style={styles.buttonText}>{data.croppedImage}</Text>
         </TouchableOpacity>
       </React.Fragment>
     );
@@ -69,6 +69,8 @@ const MarkScreen = ({route, navigation}) => {
     <React.Fragment>
       <PDFScanner
         ref={pdfScannerElement}
+        captureMultiple={true}
+        useBase64={true}
         style={styles.scanner}
         onPictureTaken={setData}
         overlayColor="rgba(255,130,0, 0.7)"
@@ -131,7 +133,7 @@ const styles = StyleSheet.create({
   preview: {
     flex: 1,
     width: '100%',
-    resizeMode: 'cover',
+    resizeMode: 'contain',
   },
   permissions: {
     flex: 1,

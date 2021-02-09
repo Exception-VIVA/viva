@@ -33,6 +33,8 @@ import TestReadScreen from './Screen/TestStackScreens/TestReadScreen';
 import ProfileScreen from './Screen/SettingStackScreens/ProfileScreen';
 import ProfileEditScreen from './Screen/SettingStackScreens/ProfileEditScreen';
 
+import BackBtn from './Screen/Components/BackBtn';
+
 import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -46,28 +48,14 @@ const SettingStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 //뒤로 가기 버튼 Image 컴포넌트
-function BackBtn() {
-  return (
-    <Image
-      source={require('./src/back-btn.png')}
-      style={{marginLeft: 10, width: 22, height: 22}}
-    />
-  );
-}
-
-function LogoTitle() {
-  return (
-    <Image
-      style={{width: 50, height: 50}}
-      source={require('./src/viva-header-logo.png')}
-    />
-  );
-}
-
-//nested navigator(tab)에서 각 스크린의 헤더이름을 찾아주기 위해
-function getHeaderTitle(route) {
-  return getFocusedRouteNameFromRoute(route) ?? 'HomeStack';
-}
+// function BackBtn() {
+//   return (
+//     <Image
+//       source={require('./src/back-btn.png')}
+//       style={{marginLeft: 10, width: 22, height: 22}}
+//     />
+//   );
+// }
 
 const HomeStackScreen = () => {
   return (
@@ -92,7 +80,15 @@ const HomeStackScreen = () => {
         })}
         component={HomeScreen}
       />
-      <HomeStack.Screen name="Search" component={SearchScreen} />
+      <HomeStack.Screen
+        name="Search"
+        options={{
+          title: '',
+          headerBackTitleVisible: false,
+          headerBackImage: BackBtn,
+        }}
+        component={SearchScreen}
+      />
       <HomeStack.Screen name="SearchResult" component={SearchResultScreen} />
       <HomeStack.Screen name="MyBook" component={MyBookScreen} />
       <HomeStack.Screen name="AcademyBook" component={AcademyBookScreen} />

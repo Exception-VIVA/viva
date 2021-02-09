@@ -1,4 +1,4 @@
-import React, {useState, useEffect, createRef} from 'react';
+import React, {useState, useEffect, createRef, useLayoutEffect} from 'react';
 
 import {
   widthPercentageToDP as wp,
@@ -7,13 +7,90 @@ import {
 
 import 'react-native-gesture-handler';
 import Loader from '../Components/Loader';
-import {StyleSheet, View, Text} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  TextInput,
+} from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
-const SearchScreen = ({route, navigation}) => {
+const SearchScreen = ({navigation}) => {
+  const [loading, setLoading] = useState(false);
+  const [userid, setUserid] = useState('');
+  const [search, setSearch] = useState('');
+  const [resultBook, setResultBook] = useState({
+    workbook_sn: '',
+    workbook_title: '',
+    workbook_year: '',
+    workbook_month: '',
+    workbook_publisher: '',
+    workbook_photo: 'https://ibb.co/j5Xtn41',
+  });
+
+  const hi = () => {
+    alert('hi');
+  };
+
+  const getResult = () => {
+    fetch(
+      'http://192.168.0.4:3001/api/search?' +
+        new URLSearchParams({
+          title: search,
+          stu_id: userid,
+        }),
+      {
+        method: 'GET',
+      },
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        // If server response message same as Data Matched
+        if (responseJson.status === 'success') {
+          setResultBook(responseJson.data.bookInfo);
+          console.log(resultBook);
+        }
+        //null일 때는 어떻게 해줄 것임?!!!??!?!!안해줘도 Flat list에서 알아서 해주나..
+      })
+      .catch((error) => {
+        //Hide Loader
+        // setLoading(false);
+        console.error(error);
+      });
+  };
+
+  const getdata = async () => {
+    await getUserid();
+    // await console.log(Object.values(workbookData));
+    await setLoading(false);
+  };
+
   useEffect(() => {
-    console.log(route.params);
+    setLoading(true);
+    getdata();
+  }, []);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitleAlign: 'left',
+      headerTitle: () => (
+        <TextInput
+          autoFocus={true}
+          blurOnSubmit={true}
+          enablesReturnKeyAutomatically={true}
+          // onSubmitEditing={alert('hi')}
+          selectionColor={'black'}
+          style={styles.searchInput}
+          clearButtonMode={'while-editing'}
+          placeholder={'검색어를 입력해주세요'}
+          onChangeText={(search) => setSearch(search)}
+          onSubmitEditing={hi}
+        />
+      ),
+    });
   }, []);
   return (
     <View style={styles.container}>
@@ -52,6 +129,9 @@ const styles = StyleSheet.create({
     fontSize: wp('4%'),
     color: 'red',
     paddingTop: wp(2),
+  },
+  searchInput: {
+    height: wp(8),
   },
 });
 
