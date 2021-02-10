@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useLayoutEffect} from 'react';
 
 import {
   widthPercentageToDP as wp,
@@ -16,6 +16,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Platform,
+  TextInput,
 } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
@@ -24,11 +25,14 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import IncorNoteScreen from './IncorNoteScreen';
 
 const HomeScreen = ({navigation}) => {
+  const [stuId, setStuId] = useState('');
   const [userData, setUserData] = useState({
     stu_nick: '',
     stu_grade: '',
     stu_photo: 'https://ibb.co/j5Xtn41',
   });
+
+  const [usertest, setUsertest] = useState([]);
   const [workbookData, setWorkbookData] = useState({
     workbook_sn: '',
     workbook_title: '',
@@ -73,9 +77,11 @@ const HomeScreen = ({navigation}) => {
 
   const getUserid = async () => {
     const userId = await AsyncStorage.getItem('user_id');
-    console.log('Done');
-
     return userId;
+  };
+
+  const setstuparam = async (userId) => {
+    await setStuId(userId);
   };
   const getUserdata = async (userId) => {
     await fetch(
@@ -92,6 +98,7 @@ const HomeScreen = ({navigation}) => {
         // If server response message same as Data Matched
         if (responseJson.status === 'success') {
           setUserData(responseJson.data.retrievedUser);
+          setStuId(responseJson.data.retrievedUser.stu_nick);
         }
       })
       .catch((error) => {
@@ -100,6 +107,31 @@ const HomeScreen = ({navigation}) => {
         console.error(error);
       });
   };
+
+  const getUsertest = async () => {
+    await fetch(
+      'http://192.168.0.4:3001/api/home?' +
+        new URLSearchParams({
+          stu_id: 'samdol',
+        }),
+      {
+        method: 'GET',
+      },
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        // If server response message same as Data Matched
+        if (responseJson.status === 'success') {
+          return responseJson.data.retrievedUser;
+        }
+      })
+      .catch((error) => {
+        //Hide Loader
+        // setLoading(false);
+        console.error(error);
+      });
+  };
+
   const getWorkbookdata = async (userId) => {
     await fetch(
       'http://192.168.0.4:3001/api/home/workbook?' +
@@ -176,7 +208,8 @@ const HomeScreen = ({navigation}) => {
       });
   };
   const consolelogData = async () => {
-    await console.log(incornoteData.note_sn);
+    await console.log(stuId);
+    await console.log(workbookData);
   };
   //assemble multi Apifetch functions
   const getMultidata = async () => {
@@ -185,7 +218,6 @@ const HomeScreen = ({navigation}) => {
     await getWorkbookdata(userId);
     await getAcabookdata(userId);
     await getIncornotedata(userId);
-    await consolelogData();
     // await console.log(Object.values(workbookData));
     await setLoading(false);
   };
@@ -193,6 +225,32 @@ const HomeScreen = ({navigation}) => {
   useEffect(() => {
     setLoading(true);
     getMultidata();
+
+    const fetchTest = async () => {
+      const user = await getUsertest();
+      setUsertest(user);
+      console.log(usertest);
+    };
+
+    fetchTest();
+  }, []);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          style={{paddingRight: 20}}
+          onPress={() => {
+            {
+              navigation.navigate('Search', {
+                stu_id: stuId,
+              });
+            }
+          }}>
+          <Icon name="search-outline" size={25} />
+        </TouchableOpacity>
+      ),
+    });
   }, []);
 
   const refRBSheet = useRef();
@@ -231,7 +289,13 @@ const HomeScreen = ({navigation}) => {
     return (
       <TouchableOpacity
         style={styles.book}
-        onPress={() => navigation.navigate('Search')}>
+        onPress={() => {
+          {
+            navigation.navigate('Search', {
+              stu_id: stuId,
+            });
+          }
+        }}>
         <Image
           source={require('../../src/plus-book.png')}
           style={styles.bookimg}
@@ -324,7 +388,14 @@ const HomeScreen = ({navigation}) => {
             <Text style={styles.titleText}>내 문제집</Text>
           </View>
           <View style={styles.container_bookbtn}>
-            <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+            <TouchableOpacity
+              onPress={() => {
+                {
+                  navigation.navigate('Search', {
+                    stu_id: stuId,
+                  });
+                }
+              }}>
               <Icon name="chevron-forward-outline" size={25} />
             </TouchableOpacity>
           </View>
@@ -346,7 +417,14 @@ const HomeScreen = ({navigation}) => {
             <Text style={styles.titleText}>학원 문제집</Text>
           </View>
           <View style={styles.container_bookbtn}>
-            <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+            <TouchableOpacity
+              onPress={() => {
+                {
+                  navigation.navigate('Search', {
+                    stu_id: stuId,
+                  });
+                }
+              }}>
               <Icon name="chevron-forward-outline" size={25} />
             </TouchableOpacity>
           </View>
@@ -368,7 +446,14 @@ const HomeScreen = ({navigation}) => {
             <Text style={styles.titleText}>오답노트</Text>
           </View>
           <View style={styles.container_bookbtn}>
-            <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+            <TouchableOpacity
+              onPress={() => {
+                {
+                  navigation.navigate('Search', {
+                    stu_id: stuId,
+                  });
+                }
+              }}>
               <Icon name="chevron-forward-outline" size={25} />
             </TouchableOpacity>
           </View>

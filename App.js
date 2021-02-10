@@ -64,13 +64,6 @@ const HomeStackScreen = () => {
         name="Home"
         options={({navigation, route}) => ({
           headerTitle: '',
-          headerRight: () => (
-            <TouchableOpacity
-              style={{paddingRight: 20}}
-              onPress={() => navigation.navigate('Search')}>
-              <Icon name="search-outline" size={25} />
-            </TouchableOpacity>
-          ),
           headerLeft: () => (
             <Image
               style={{width: wp(33), height: hp(3.5), resizeMode: 'contain'}}

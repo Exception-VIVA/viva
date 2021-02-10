@@ -18,9 +18,9 @@ import {
 
 import AsyncStorage from '@react-native-community/async-storage';
 
-const SearchScreen = ({navigation}) => {
+const SearchScreen = ({route, navigation}) => {
+  const {stu_id} = route.params;
   const [loading, setLoading] = useState(false);
-  const [userid, setUserid] = useState('');
   const [search, setSearch] = useState('');
   const [resultBook, setResultBook] = useState({
     workbook_sn: '',
@@ -40,7 +40,7 @@ const SearchScreen = ({navigation}) => {
       'http://192.168.0.4:3001/api/search?' +
         new URLSearchParams({
           title: search,
-          stu_id: userid,
+          stu_id: stu_id,
         }),
       {
         method: 'GET',
@@ -62,15 +62,8 @@ const SearchScreen = ({navigation}) => {
       });
   };
 
-  const getdata = async () => {
-    await getUserid();
-    // await console.log(Object.values(workbookData));
-    await setLoading(false);
-  };
-
   useEffect(() => {
-    setLoading(true);
-    getdata();
+    console.log(route.params);
   }, []);
 
   useLayoutEffect(() => {
