@@ -22,20 +22,23 @@ const SearchScreen = ({route, navigation}) => {
   const {stu_id} = route.params;
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
-  const [resultBook, setResultBook] = useState({
-    workbook_sn: '',
-    workbook_title: '',
-    workbook_year: '',
-    workbook_month: '',
-    workbook_publisher: '',
-    workbook_photo: 'https://ibb.co/j5Xtn41',
-  });
+  const [stuId, setStuId] = useState();
+
+  const [resultBook, setResultBook] = useState([]);
 
   const hi = () => {
     alert('hi');
   };
 
-  const getResult = () => {
+  const getUserid = async () => {
+    const userId = await AsyncStorage.getItem('user_id');
+    setStuId(userId);
+    await console.log('===stu id ==');
+    await console.log(stuId);
+    return userId;
+  };
+
+  const getResult = (stu_id) => {
     fetch(
       'http://192.168.0.4:3001/api/search?' +
         new URLSearchParams({
@@ -63,10 +66,11 @@ const SearchScreen = ({route, navigation}) => {
   };
 
   useEffect(() => {
-    console.log(route.params);
+    const userId = getUserid();
   }, []);
 
   useLayoutEffect(() => {
+    console.log(route.params);
     navigation.setOptions({
       headerTitleAlign: 'left',
       headerTitle: () => (

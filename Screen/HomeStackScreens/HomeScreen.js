@@ -25,66 +25,21 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import IncorNoteScreen from './IncorNoteScreen';
 
 const HomeScreen = ({navigation}) => {
-  const [stuId, setStuId] = useState('');
-  const [userData, setUserData] = useState({
-    stu_nick: '',
-    stu_grade: '',
-    stu_photo: 'https://ibb.co/j5Xtn41',
-  });
-
-  const [usertest, setUsertest] = useState([]);
-  const [workbookData, setWorkbookData] = useState({
-    workbook_sn: '',
-    workbook_title: '',
-    workbook_year: '',
-    workbook_month: '',
-    workbook_publisher: '',
-    workbook_photo: 'https://ibb.co/j5Xtn41',
-  });
-  const [acabookData, setAcabookData] = useState({
-    workbook_sn: '',
-    workbook_title: '',
-    workbook_year: '',
-    workbook_month: '',
-    workbook_publisher: '',
-    workbook_photo: 'https://ibb.co/j5Xtn41',
-  });
-  const [incornoteData, setIncornoteData] = useState({
-    note_sn: '',
-    stu_sn: '',
-    note_name: '',
-    note_photo: 'https://ibb.co/j5Xtn41',
-    note_date: '',
-  });
+  const [userData, setUserData] = useState([]);
+  const [workbookData, setWorkbookData] = useState([]);
+  const [acabookData, setAcabookData] = useState([]);
+  const [incornoteData, setIncornoteData] = useState([]);
   const [loading, setLoading] = useState(false);
-  // const [userId, setUserId] = useState('');
-  const [currentBook, setCurrentBook] = useState({
-    workbook_sn: '',
-    workbook_title: '',
-    workbook_year: '',
-    workbook_month: '',
-    workbook_publisher: '',
-    workbook_photo: 'https://ibb.co/j5Xtn41',
-  });
-
-  const [currentNote, setCurentNote] = useState({
-    note_sn: '',
-    stu_sn: '',
-    note_name: '',
-    note_photo: 'https://ibb.co/j5Xtn41',
-    note_date: '',
-  });
+  const [currentBook, setCurrentBook] = useState([]);
+  const [stuId, setStuId] = useState('');
 
   const getUserid = async () => {
     const userId = await AsyncStorage.getItem('user_id');
     return userId;
   };
 
-  const setstuparam = async (userId) => {
-    await setStuId(userId);
-  };
   const getUserdata = async (userId) => {
-    await fetch(
+    const response = await fetch(
       'http://192.168.0.4:3001/api/home?' +
         new URLSearchParams({
           stu_id: userId,
@@ -92,48 +47,18 @@ const HomeScreen = ({navigation}) => {
       {
         method: 'GET',
       },
-    )
-      .then((response) => response.json())
-      .then((responseJson) => {
-        // If server response message same as Data Matched
-        if (responseJson.status === 'success') {
-          setUserData(responseJson.data.retrievedUser);
-          setStuId(responseJson.data.retrievedUser.stu_nick);
-        }
-      })
-      .catch((error) => {
-        //Hide Loader
-        // setLoading(false);
-        console.error(error);
-      });
-  };
+    );
 
-  const getUsertest = async () => {
-    await fetch(
-      'http://192.168.0.4:3001/api/home?' +
-        new URLSearchParams({
-          stu_id: 'samdol',
-        }),
-      {
-        method: 'GET',
-      },
-    )
-      .then((response) => response.json())
-      .then((responseJson) => {
-        // If server response message same as Data Matched
-        if (responseJson.status === 'success') {
-          return responseJson.data.retrievedUser;
-        }
-      })
-      .catch((error) => {
-        //Hide Loader
-        // setLoading(false);
-        console.error(error);
-      });
+    if (response.status === 200) {
+      const responseJson = await response.json();
+      return responseJson.data.retrievedUser;
+    } else {
+      throw new Error('unable to get your User');
+    }
   };
 
   const getWorkbookdata = async (userId) => {
-    await fetch(
+    const response = await fetch(
       'http://192.168.0.4:3001/api/home/workbook?' +
         new URLSearchParams({
           stu_id: userId,
@@ -141,24 +66,18 @@ const HomeScreen = ({navigation}) => {
       {
         method: 'GET',
       },
-    )
-      .then((response) => response.json())
-      .then((responseJson) => {
-        // If server response message same as Data Matched
-        if (responseJson.status === 'success') {
-          setWorkbookData(responseJson.data.bookInfo);
-        } else if (responseJson.status === 'null') {
-          setWorkbookData([]);
-        }
-      })
-      .catch((error) => {
-        //Hide Loader
-        // setLoading(false);
-        console.error(error);
-      });
+    );
+
+    if (response.status === 200) {
+      const responseJson = await response.json();
+      return responseJson.data.bookInfo;
+    } else {
+      throw new Error('unable to get your Workbook');
+    }
   };
+
   const getAcabookdata = async (userId) => {
-    await fetch(
+    const response = await fetch(
       'http://192.168.0.4:3001/api/home/academy?' +
         new URLSearchParams({
           stu_id: userId,
@@ -166,24 +85,16 @@ const HomeScreen = ({navigation}) => {
       {
         method: 'GET',
       },
-    )
-      .then((response) => response.json())
-      .then((responseJson) => {
-        // If server response message same as Data Matched
-        if (responseJson.status === 'success') {
-          setAcabookData(responseJson.data.bookInfo);
-        } else if (responseJson.status === 'null') {
-          setAcabookData([]);
-        }
-      })
-      .catch((error) => {
-        //Hide Loader
-        // setLoading(false);
-        console.error(error);
-      });
+    );
+    if (response.status === 200) {
+      const responseJson = await response.json();
+      return responseJson.data.bookInfo;
+    } else {
+      throw new Error('unable to get your Workbook');
+    }
   };
   const getIncornotedata = async (userId) => {
-    await fetch(
+    const response = await fetch(
       'http://192.168.0.4:3001/api/home/incor-note?' +
         new URLSearchParams({
           stu_id: userId,
@@ -191,48 +102,40 @@ const HomeScreen = ({navigation}) => {
       {
         method: 'GET',
       },
-    )
-      .then((response) => response.json())
-      .then((responseJson) => {
-        // If server response message same as Data Matched
-        if (responseJson.status === 'success') {
-          setIncornoteData(responseJson.data.bookInfo);
-        } else if (responseJson.status === 'null') {
-          setIncornoteData([]);
-        }
-      })
-      .catch((error) => {
-        //Hide Loader
-        // setLoading(false);
-        console.error(error);
-      });
+    );
+
+    if (response.status === 200) {
+      const responseJson = await response.json();
+      if (responseJson.status === 'success') {
+        return responseJson.data.bookInfo;
+      } else if (responseJson.status === 'null') {
+        return [];
+      }
+    }
   };
-  const consolelogData = async () => {
-    await console.log(stuId);
-    await console.log(workbookData);
-  };
+
   //assemble multi Apifetch functions
   const getMultidata = async () => {
     const userId = await getUserid();
-    await getUserdata(userId);
-    await getWorkbookdata(userId);
-    await getAcabookdata(userId);
+    setStuId(userId);
+    const userdata = await getUserdata(userId);
+    setUserData(userdata);
+
+    const workbookdata = await getWorkbookdata(userId);
+    setWorkbookData(workbookdata);
+
+    const acabookdata = await getAcabookdata(userId);
+    setAcabookData(acabookdata);
     await getIncornotedata(userId);
-    // await console.log(Object.values(workbookData));
-    await setLoading(false);
+    const incornotedata = await getIncornotedata(userId);
+    setIncornoteData(incornotedata);
+    setLoading(false);
   };
 
   useEffect(() => {
     setLoading(true);
-    getMultidata();
 
-    const fetchTest = async () => {
-      const user = await getUsertest();
-      setUsertest(user);
-      console.log(usertest);
-    };
-
-    fetchTest();
+    getMultidata().then((data) => setStuId(data));
   }, []);
 
   useLayoutEffect(() => {
@@ -260,7 +163,7 @@ const HomeScreen = ({navigation}) => {
       <TouchableOpacity
         style={styles.book}
         onPress={() => {
-          // console.log(item);
+          // console.log(userData);
           setCurrentBook(item);
           refRBSheet.current.open();
         }}>
@@ -331,7 +234,7 @@ const HomeScreen = ({navigation}) => {
           </View>
 
           <View style={styles.profiletxt_grade}>
-            {userData.stu_nick.length > 0 && (
+            {userData != [] && (
               <Text style={{fontSize: wp('4'), color: 'grey'}}>
                 고등학교 {userData.stu_grade}학년
               </Text>
