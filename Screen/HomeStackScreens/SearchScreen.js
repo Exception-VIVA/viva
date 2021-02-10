@@ -7,6 +7,9 @@ import {
 
 import 'react-native-gesture-handler';
 import Loader from '../Components/Loader';
+import Icon from 'react-native-vector-icons/dist/Ionicons';
+import SearchAddBtn from '../Components/SearchAddBtn';
+
 import {
   StyleSheet,
   View,
@@ -14,15 +17,19 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
+  Platform,
+  FlatList,
+  ScrollView,
+  SafeAreaView,
 } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
-const SearchScreen = ({route, navigation}) => {
-  const {stu_id} = route.params;
+const SearchScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [stuId, setStuId] = useState();
+  const [isClick, setIsClick] = useState(false);
 
   const [resultBook, setResultBook] = useState([]);
 
@@ -33,17 +40,22 @@ const SearchScreen = ({route, navigation}) => {
   const getUserid = async () => {
     const userId = await AsyncStorage.getItem('user_id');
     setStuId(userId);
-    await console.log('===stu id ==');
-    await console.log(stuId);
+    // console.log(stuId);
     return userId;
   };
 
-  const getResult = (stu_id) => {
+  const getResult = () => {
+    // console.log('하하');
+    // console.log('===search===');
+    // console.log(search);
+    // console.log(stuId);
+
+    setLoading(true);
     fetch(
       'http://192.168.0.4:3001/api/search?' +
         new URLSearchParams({
           title: search,
-          stu_id: stu_id,
+          stu_id: stuId,
         }),
       {
         method: 'GET',
@@ -51,26 +63,34 @@ const SearchScreen = ({route, navigation}) => {
     )
       .then((response) => response.json())
       .then((responseJson) => {
+        // console.log(responseJson);
+
         // If server response message same as Data Matched
         if (responseJson.status === 'success') {
-          setResultBook(responseJson.data.bookInfo);
+          // console.log(responseJson);
+          // console.log(responseJson.data.search_result);
+          setResultBook(responseJson.data.search_result);
+
+          console.log('==test==');
+          for (var i in resultBook) {
+            resultBook[i].isClick = false;
+          }
           console.log(resultBook);
+        } else if (responseJson.status === 'null') {
+          setResultBook([]);
+          console.log('null');
         }
-        //null일 때는 어떻게 해줄 것임?!!!??!?!!안해줘도 Flat list에서 알아서 해주나..
       })
       .catch((error) => {
         //Hide Loader
         // setLoading(false);
         console.error(error);
       });
+    setLoading(false);
   };
 
   useEffect(() => {
     const userId = getUserid();
-  }, []);
-
-  useLayoutEffect(() => {
-    console.log(route.params);
     navigation.setOptions({
       headerTitleAlign: 'left',
       headerTitle: () => (
@@ -78,20 +98,168 @@ const SearchScreen = ({route, navigation}) => {
           autoFocus={true}
           blurOnSubmit={true}
           enablesReturnKeyAutomatically={true}
-          // onSubmitEditing={alert('hi')}
           selectionColor={'black'}
           style={styles.searchInput}
           clearButtonMode={'while-editing'}
           placeholder={'검색어를 입력해주세요'}
           onChangeText={(search) => setSearch(search)}
-          onSubmitEditing={hi}
+          onSubmitEditing={getResult}
         />
       ),
     });
-  }, []);
+  });
+
+  const resultBookItems = ({item}) => {
+    return (
+      <View style={styles.resultitem_container}>
+        <View style={styles.resultitem_book_container}>
+          <View style={styles.book}>
+            <Image source={{uri: item.workbook_photo}} style={styles.bookimg} />
+          </View>
+        </View>
+
+        <View style={styles.resultitem_info_container}>
+          <View style={styles.info_top}>
+            <Text style={{fontSize: wp(4.5)}}>{item.workbook_title}</Text>
+          </View>
+          <View style={styles.info_bottom}>
+            {item.isClick && (
+              <TouchableOpacity
+                style={[styles.btn, styles.grey]}
+                disabled={true}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: wp('4%'),
+                    fontWeight: 'bold',
+                  }}>
+                  추가완료
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            {!item.isClick && (
+              <TouchableOpacity
+                style={styles.btn}
+                onPress={() => {
+                  {
+                    item.isClick = true;
+                    setIsClick(!isClick); //re-render를 위해 넣음! 의미 없음
+                    console.log(item);
+                    addBook(item.workbook_sn, item.isClick);
+                  }
+                }}>
+                {/*onPress={addBook(item.workbook_sn)}>*/}
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: wp('4%'),
+                    fontWeight: 'bold',
+                  }}>
+                  추가
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  const clickBook = () => {
+    // item.isClick = true;
+    setIsClick(true);
+  };
+  const addBook = (workbook_sn, isclick) => {
+    console.log('addBook실행');
+    console.log(isclick);
+    var dataToSend = {
+      stu_id: stuId,
+      workbook_sn: workbook_sn,
+    };
+    var formBody = [];
+    for (var key in dataToSend) {
+      var encodedKey = encodeURIComponent(key);
+      var encodedValue = encodeURIComponent(dataToSend[key]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
+
+    fetch('http://192.168.0.4:3001/api/search', {
+      method: 'POST',
+      body: formBody,
+      headers: {
+        //Header Defination
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        //Hide Loader
+        setLoading(false);
+        console.log(responseJson);
+        // If server response message same as Data Matched
+        if (responseJson.status === 'success') {
+          console.log('inserting book is Successful.');
+        } else {
+          console.log('inserting book is fail..');
+        }
+      })
+      .catch((error) => {
+        //Hide Loader
+        setLoading(false);
+        console.error(error);
+      });
+  };
+
+  const emptyBook = () => {
+    return (
+      <View style={styles.emptyResult}>
+        <Icon
+          name="warning-outline"
+          size={wp(10)}
+          style={{height: hp(8), color: 'grey'}}
+        />
+        <Text style={{fontSize: wp(4), color: 'grey'}}>
+          검색결과가 존재하지 않습니다.
+        </Text>
+      </View>
+    );
+  };
+
+  //
+  // useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     headerTitleAlign: 'left',
+  //     headerTitle: () => (
+  //       <TextInput
+  //         autoFocus={true}
+  //         blurOnSubmit={true}
+  //         enablesReturnKeyAutomatically={true}
+  //         selectionColor={'black'}
+  //         style={styles.searchInput}
+  //         clearButtonMode={'while-editing'}
+  //         placeholder={'검색어를 입력해주세요'}
+  //         onChangeText={(search) => setSearch(search)}
+  //         onSubmitEditing={getResult}
+  //       />
+  //     ),
+  //   });
+  // }, []);
   return (
     <View style={styles.container}>
-      <Text>this is SearchScreen</Text>
+      <SafeAreaView style={{flex: 1}}>
+        <View>
+          <FlatList
+            style={styles.list}
+            horizontal={false}
+            data={resultBook}
+            renderItem={resultBookItems}
+            keyExtractor={(item, index) => index.toString()}
+            ListEmptyComponent={emptyBook()}
+          />
+        </View>
+      </SafeAreaView>
     </View>
   );
 };
@@ -101,8 +269,8 @@ const styles = StyleSheet.create({
     flex: 1, //전체의 공간을 차지한다는 의미
     flexDirection: 'column',
     backgroundColor: 'white',
-    paddingLeft: wp(7),
-    paddingRight: wp(7),
+    // paddingLeft: wp(7),
+    // paddingRight: wp(7),
   },
   topArea: {
     flex: 1,
@@ -128,7 +296,99 @@ const styles = StyleSheet.create({
     paddingTop: wp(2),
   },
   searchInput: {
-    height: wp(8),
+    ...Platform.select({
+      ios: {
+        height: wp(8),
+      },
+      android: {},
+    }),
+  },
+  list: {
+    // paddingLeft: wp(3),
+    // paddingRight: wp(3),
+  },
+
+  resultitem_container: {
+    flex: 1,
+    flexDirection: 'row',
+    height: hp(25),
+    borderBottomWidth: 0.5,
+    borderColor: 'lightgrey',
+    padding: wp(7),
+  },
+  resultitem_book_container: {
+    flex: 1,
+  },
+  resultitem_info_container: {
+    flex: 2,
+    flexDirection: 'column',
+  },
+  info_top: {
+    paddingLeft: wp(4),
+    flex: 5,
+  },
+  info_bottom: {
+    flex: 1.3,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  book: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 0,
+    borderWidth: 0,
+    borderRadius: 5,
+    shadowColor: '#000',
+
+    elevation: 7,
+
+    ...Platform.select({
+      ios: {
+        overflow: 'visible',
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 7,
+        },
+        shadowOpacity: 0.15,
+        shadowRadius: 9.51,
+      },
+      android: {
+        overflow: 'visible',
+      },
+    }),
+  },
+  bookimg: {
+    resizeMode: 'cover',
+    borderRadius: 5,
+    ...Platform.select({
+      ios: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 5,
+      },
+      android: {
+        width: '100%',
+        height: '100%',
+      },
+    }),
+  },
+  btn: {
+    width: wp(25),
+    height: '100%',
+    borderRadius: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+  },
+  grey: {
+    backgroundColor: '#C1C2CA',
+  },
+
+  emptyResult: {
+    height: wp(100),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
