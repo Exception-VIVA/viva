@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useLayoutEffect} from 'react';
+import React, {useState, useEffect, useLayoutEffect, useRef} from 'react';
 
 import {
   widthPercentageToDP as wp,
@@ -8,7 +8,8 @@ import {
 import 'react-native-gesture-handler';
 import Loader from '../Components/Loader';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
-import RNRestart from 'react-native-restart';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import {showMessage, hideMessage} from 'react-native-flash-message';
 
 import {
   StyleSheet,
@@ -20,6 +21,7 @@ import {
   Platform,
   FlatList,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
@@ -28,6 +30,8 @@ const MyBookScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [workbookData, setWorkbookData] = useState([]);
   const [isClick, setIsClick] = useState(false); //to re-render
+  const [currentWorkbooksn, setCurrentWorkbooksn] = useState('');
+  const refRBSheet = useRef();
 
   const getUserid = async () => {
     const userId = await AsyncStorage.getItem('user_id');
@@ -70,24 +74,31 @@ const MyBookScreen = ({navigation}) => {
     const what = await delBook(userId, workbook_sn);
     const workbookdata = await getWorkbookdata(userId);
     setWorkbookData(workbookdata);
+
+    showMessage({
+      message: '삭제가 완료되었습니다.',
+      type: 'default',
+      duration: 2500,
+      // autoHide: false,
+    });
   };
 
   //localhost:3001/api/book-list/workbook/'삭제할 workbook_sn'?stu_id=samdol
   const delBook = (stuId, workbook_sn) => {
-    console.log('****stuId****');
-    console.log(stuId);
-    console.log('****workbook_sn****');
-    console.log(workbook_sn);
-
-    console.log(
-      'http://192.168.0.4:3001/api/book-list/workbook' +
-        '/' +
-        workbook_sn +
-        '?' +
-        new URLSearchParams({
-          stu_id: stuId,
-        }),
-    );
+    // console.log('****stuId****');
+    // console.log(stuId);
+    // console.log('****workbook_sn****');
+    // console.log(workbook_sn);
+    //
+    // console.log(
+    //   'http://192.168.0.4:3001/api/book-list/workbook' +
+    //     '/' +
+    //     workbook_sn +
+    //     '?' +
+    //     new URLSearchParams({
+    //       stu_id: stuId,
+    //     }),
+    // );
 
     fetch(
       'http://192.168.0.4:3001/api/book-list/workbook' +
@@ -176,13 +187,14 @@ const MyBookScreen = ({navigation}) => {
               style={[styles.btn]}
               onPress={() => {
                 {
-                  delBookFull(item.workbook_sn);
+                  setCurrentWorkbooksn(item.workbook_sn);
+                  refRBSheet.current.open();
                 }
               }}>
               <Text
                 style={{
                   color: 'white',
-                  fontSize: wp('4%'),
+                  fontSize: wp('3.5'),
                   fontWeight: 'bold',
                 }}>
                 삭제
@@ -194,24 +206,63 @@ const MyBookScreen = ({navigation}) => {
     );
   };
 
-  const emptyBook = () => {
-    return (
-      <View style={styles.emptyResult}>
-        <Icon
-          name="warning-outline"
-          size={wp(10)}
-          style={{height: hp(8), color: 'grey'}}
-        />
-        <Text style={{fontSize: wp(4), color: 'grey'}}>
-          내 문제집이 존재하지 않습니다.
-        </Text>
-      </View>
-    );
-  };
-
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1}}>
+        {/*취소/삭제 버튼 modal*/}
+        <RBSheet
+          ref={refRBSheet}
+          closeOnDragDown={false}
+          closeOnPressMask={true}
+          height={hp(22)}
+          animationType={'fade'}
+          openDuration={30}
+          closeDuration={0}
+          customStyles={{
+            wrapper: {
+              backgroundColor: 'rgba(41, 41, 41, 0.5)',
+            },
+            container: {
+              backgroundColor: 'white',
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+            },
+          }}>
+          <View style={styles.container}>
+            <View style={styles.txtArea}>
+              <Text style={{fontWeight: 'bold', fontSize: wp(4)}}>
+                선택한 문제집을 삭제하시겠어요?
+              </Text>
+            </View>
+            <View style={styles.btnContainer}>
+              <View style={styles.btnArea_l}>
+                <TouchableOpacity
+                  style={styles.delbtnoutline}
+                  onPress={() => {
+                    {
+                      refRBSheet.current.close();
+                    }
+                  }}>
+                  <Text>취소</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.btnArea_r}>
+                <TouchableOpacity
+                  style={styles.delbtn}
+                  onPress={() => {
+                    {
+                      delBookFull(currentWorkbooksn);
+                      refRBSheet.current.close();
+                    }
+                  }}>
+                  <Text style={{color: 'white'}}>삭제</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </RBSheet>
+
         <View>
           <FlatList
             style={styles.list}
@@ -219,7 +270,6 @@ const MyBookScreen = ({navigation}) => {
             data={workbookData}
             renderItem={resultBookItems}
             keyExtractor={(item, index) => index.toString()}
-            // ListEmptyComponent={emptyBook()}
           />
         </View>
       </SafeAreaView>
@@ -265,7 +315,7 @@ const styles = StyleSheet.create({
     flex: 5,
   },
   info_bottom: {
-    flex: 1.3,
+    flex: 1.5,
     justifyContent: 'center',
     alignItems: 'flex-end',
   },
@@ -311,12 +361,34 @@ const styles = StyleSheet.create({
     }),
   },
   btn: {
-    width: wp(25),
+    width: wp(22),
     height: '100%',
     borderRadius: 7,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'black',
+  },
+  delbtnoutline: {
+    margin: wp(6),
+    marginRight: wp(2),
+    width: wp(33),
+    height: hp(5),
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderWidth: 1,
+  },
+  delbtn: {
+    margin: wp(6),
+    marginLeft: wp(2),
+    width: wp(33),
+    height: hp(5),
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    borderWidth: 1,
   },
   grey: {
     backgroundColor: '#C1C2CA',
@@ -326,6 +398,32 @@ const styles = StyleSheet.create({
     height: wp(100),
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  btnContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: hp(1.5),
+  },
+  btnArea_l: {
+    // backgroundColor: 'orange',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  btnArea_r: {
+    // backgroundColor: 'blue',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    // marginRight: wp(10),
+  },
+
+  txtArea: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: hp(2.5),
   },
 });
 

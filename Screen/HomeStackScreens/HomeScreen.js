@@ -22,7 +22,6 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import IncorNoteScreen from './IncorNoteScreen';
 
 const HomeScreen = ({navigation}) => {
   const [userData, setUserData] = useState([]);
@@ -265,9 +264,16 @@ const HomeScreen = ({navigation}) => {
           closeOnPressMask={true}
           height={hp(28)}
           animationType={'fade'}
+          openDuration={30}
+          closeDuration={30}
           customStyles={{
             wrapper: {
-              backgroundColor: 'transparent',
+              backgroundColor: 'rgba(41, 41, 41, 0.5)',
+            },
+            container: {
+              backgroundColor: 'white',
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
             },
             draggableIcon: {
               backgroundColor: '#000',

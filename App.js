@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import FlashMessage from 'react-native-flash-message';
 
 import {
   SafeAreaView,
@@ -197,6 +198,7 @@ const App: () => React$Node = () => {
           options={{headerShown: false}}
         />
       </Stack.Navigator>
+      <FlashMessage position="bottom" />
     </NavigationContainer>
   );
 };
