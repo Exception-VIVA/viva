@@ -145,13 +145,13 @@ const HomeScreen = ({navigation}) => {
     getMultidata();
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      setLoading(true);
-      getMultidata();
-    });
-    return unsubscribe;
-  }, [navigation]);
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     setLoading(true);
+  //     getMultidata();
+  //   });
+  //   return unsubscribe;
+  // }, [navigation]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -236,7 +236,6 @@ const HomeScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Loader loading={loading} />
-
       <View style={styles.container_profile}>
         <View style={styles.container_profileimg}>
           <Image source={{uri: userData.stu_photo}} style={styles.profileimg} />
@@ -309,7 +308,7 @@ const HomeScreen = ({navigation}) => {
             <TouchableOpacity
               onPress={() => {
                 {
-                  navigation.navigate('Search', {
+                  navigation.navigate('MyBook', {
                     stu_id: stuId,
                   });
                 }

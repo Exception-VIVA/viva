@@ -75,11 +75,11 @@ const HomeStackScreen = () => {
       />
       <HomeStack.Screen
         name="Search"
-        options={{
-          title: '',
-          headerBackTitleVisible: false,
-          headerBackImage: BackBtn,
-        }}
+        // options={{
+        //   title: '',
+        //   headerBackTitleVisible: false,
+        //   headerBackImage: BackBtn,
+        // }}
         component={SearchScreen}
       />
       <HomeStack.Screen name="SearchResult" component={SearchResultScreen} />

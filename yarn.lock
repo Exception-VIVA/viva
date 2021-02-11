@@ -5968,6 +5968,11 @@
   "resolved" "https://registry.npmjs.org/react-native-responsive-screen/-/react-native-responsive-screen-1.4.2.tgz"
   "version" "1.4.2"
 
+"react-native-restart@0.0.20":
+  "integrity" "sha512-lpWqKvfKaCfolosRHHH9+hDdjqMntEedRiLdVqmwNJejjfA4gUH+VEn0uhSaVueBgQJl5525X6B/0bSP55g+iQ=="
+  "resolved" "https://registry.npmjs.org/react-native-restart/-/react-native-restart-0.0.20.tgz"
+  "version" "0.0.20"
+
 "react-native-safe-area-context@>= 0.6.0", "react-native-safe-area-context@3.1.9":
   "integrity" "sha512-wmcGbdyE/vBSL5IjDPReoJUEqxkZsywZw5gPwsVUV1NBpw5eTIdnL6Y0uNKHE25Z661moxPHQz6kwAkYQyorxA=="
   "resolved" "https://registry.npmjs.org/react-native-safe-area-context/-/react-native-safe-area-context-3.1.9.tgz"

@@ -1,13 +1,9 @@
 import React from 'react';
-import {Image} from 'react-native';
-import App from '../../App';
+import Icon from 'react-native-vector-icons/dist/Ionicons';
 
 const BackBtn = () => {
   return (
-    <Image
-      source={require('../../src/back-btn.png')}
-      style={{marginLeft: 10, width: 22, height: 22}}
-    />
+    <Icon name="chevron-back-outline" size={30} style={{paddingLeft: 10}} />
   );
 };
 export default BackBtn;

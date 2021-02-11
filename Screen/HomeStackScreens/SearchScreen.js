@@ -19,7 +19,6 @@ import {
   TextInput,
   Platform,
   FlatList,
-  ScrollView,
   SafeAreaView,
 } from 'react-native';
 
@@ -30,12 +29,9 @@ const SearchScreen = ({navigation}) => {
   const [search, setSearch] = useState('');
   const [stuId, setStuId] = useState();
   const [isClick, setIsClick] = useState(false);
+  const [isAdd, setIsAdd] = useState(false);
 
   const [resultBook, setResultBook] = useState([]);
-
-  const hi = () => {
-    alert('hi');
-  };
 
   const getUserid = async () => {
     const userId = await AsyncStorage.getItem('user_id');
@@ -106,6 +102,20 @@ const SearchScreen = ({navigation}) => {
           onSubmitEditing={getResult}
         />
       ),
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => {
+            {
+              navigation.replace('Home');
+            }
+          }}>
+          <Icon
+            name="chevron-back-outline"
+            size={33}
+            style={{paddingLeft: 10}}
+          />
+        </TouchableOpacity>
+      ),
     });
   });
 
@@ -145,8 +155,9 @@ const SearchScreen = ({navigation}) => {
                   {
                     item.isClick = true;
                     setIsClick(!isClick); //re-render를 위해 넣음! 의미 없음
+                    setIsAdd(true);
                     console.log(item);
-                    addBook(item.workbook_sn, item.isClick);
+                    addBook(item.workbook_sn);
                   }
                 }}>
                 {/*onPress={addBook(item.workbook_sn)}>*/}
@@ -166,11 +177,7 @@ const SearchScreen = ({navigation}) => {
     );
   };
 
-  const clickBook = () => {
-    // item.isClick = true;
-    setIsClick(true);
-  };
-  const addBook = (workbook_sn, isclick) => {
+  const addBook = (workbook_sn) => {
     setLoading(true);
 
     var dataToSend = {
