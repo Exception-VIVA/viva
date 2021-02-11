@@ -70,7 +70,11 @@ const HomeScreen = ({navigation}) => {
 
     if (response.status === 200) {
       const responseJson = await response.json();
-      return responseJson.data.bookInfo;
+      if (responseJson.status === 'success') {
+        return responseJson.data.bookInfo;
+      } else if (responseJson.status === 'null') {
+        return [];
+      }
     } else {
       throw new Error('unable to get your Workbook');
     }
@@ -88,7 +92,11 @@ const HomeScreen = ({navigation}) => {
     );
     if (response.status === 200) {
       const responseJson = await response.json();
-      return responseJson.data.bookInfo;
+      if (responseJson.status === 'success') {
+        return responseJson.data.bookInfo;
+      } else if (responseJson.status === 'null') {
+        return [];
+      }
     } else {
       throw new Error('unable to get your Workbook');
     }
@@ -133,10 +141,19 @@ const HomeScreen = ({navigation}) => {
   };
 
   useEffect(() => {
+    console.log('원래 useeffect');
     setLoading(true);
-
-    getMultidata().then((data) => setStuId(data));
+    getMultidata();
   }, []);
+
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     setLoading(true);
+  //     // getMultidata();
+  //     console.log('뒤로가서 get freshed..');
+  //   });
+  //   return unsubscribe;
+  // }, [navigation]);
 
   useLayoutEffect(() => {
     navigation.setOptions({

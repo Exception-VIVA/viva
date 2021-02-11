@@ -315,6 +315,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderColor: 'lightgrey',
     padding: wp(7),
+
+    ...Platform.select({
+      android: {
+        width: '100%',
+        height: hp(27),
+      },
+    }),
   },
   resultitem_book_container: {
     flex: 1,
@@ -369,7 +376,7 @@ const styles = StyleSheet.create({
       },
       android: {
         width: '100%',
-        height: '100%',
+        height: hp(20),
       },
     }),
   },
