@@ -141,19 +141,17 @@ const HomeScreen = ({navigation}) => {
   };
 
   useEffect(() => {
-    console.log('원래 useeffect');
     setLoading(true);
     getMultidata();
   }, []);
 
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     setLoading(true);
-  //     // getMultidata();
-  //     console.log('뒤로가서 get freshed..');
-  //   });
-  //   return unsubscribe;
-  // }, [navigation]);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setLoading(true);
+      getMultidata();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   useLayoutEffect(() => {
     navigation.setOptions({

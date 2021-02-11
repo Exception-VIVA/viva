@@ -171,8 +171,8 @@ const SearchScreen = ({navigation}) => {
     setIsClick(true);
   };
   const addBook = (workbook_sn, isclick) => {
-    console.log('addBook실행');
-    console.log(isclick);
+    setLoading(true);
+
     var dataToSend = {
       stu_id: stuId,
       workbook_sn: workbook_sn,
