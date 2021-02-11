@@ -76,7 +76,7 @@ const MyBookScreen = ({navigation}) => {
     setWorkbookData(workbookdata);
 
     showMessage({
-      message: '삭제가 완료되었습니다.',
+      message: '선택한 문제집이 삭제되었습니다.',
       type: 'default',
       duration: 2500,
       // autoHide: false,
@@ -404,6 +404,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingBottom: hp(1.5),
+
+    ...Platform.select({
+      ios: {
+        paddingBottom: hp(4.5),
+      },
+    }),
   },
   btnArea_l: {
     // backgroundColor: 'orange',
@@ -424,6 +430,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: hp(2.5),
+    ...Platform.select({
+      ios: {
+        paddingTop: hp(1),
+      },
+    }),
   },
 });
 
