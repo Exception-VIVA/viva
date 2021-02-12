@@ -22,6 +22,7 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 
 const LoginScreen = ({navigation}) => {
+  const preURL = require('../preURL/preURL');
   const [userId, setUserId] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -64,7 +65,7 @@ const LoginScreen = ({navigation}) => {
     formBody = formBody.join('&');
     // console.log(formBody);
 
-    fetch('http://192.168.0.4:3001/api/user/login', {
+    fetch(preURL.preURL + '/api/user/login', {
       method: 'POST',
       body: formBody,
       headers: {

@@ -6,9 +6,7 @@ import {
 } from 'react-native-responsive-screen';
 
 import 'react-native-gesture-handler';
-import Loader from '../Components/Loader';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
-import SearchAddBtn from '../Components/SearchAddBtn';
 
 import {
   StyleSheet,
@@ -25,6 +23,8 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 
 const SearchScreen = ({navigation}) => {
+  const preURL = require('../../preURL/preURL');
+
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [stuId, setStuId] = useState();
@@ -41,14 +41,11 @@ const SearchScreen = ({navigation}) => {
   };
 
   const getResult = () => {
-    // console.log('하하');
-    // console.log('===search===');
-    // console.log(search);
-    // console.log(stuId);
-
     setLoading(true);
+
     fetch(
-      'http://192.168.0.4:3001/api/search?' +
+      preURL.preURL +
+        '/api/search?' +
         new URLSearchParams({
           title: search,
           stu_id: stuId,
@@ -192,7 +189,7 @@ const SearchScreen = ({navigation}) => {
     }
     formBody = formBody.join('&');
 
-    fetch('http://192.168.0.4:3001/api/search', {
+    fetch(preURL.preURL + '/api/search', {
       method: 'POST',
       body: formBody,
       headers: {

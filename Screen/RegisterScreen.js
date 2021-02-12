@@ -23,6 +23,8 @@ import {
 } from 'react-native';
 
 const RegisterScreen = (props) => {
+  const preURL = require('../preURL/preURL');
+
   const [userName, setUserName] = useState('');
   const [userId, setUserId] = useState('');
   const [userGrade, setUserGrade] = useState('');
@@ -86,7 +88,7 @@ const RegisterScreen = (props) => {
     }
     formBody = formBody.join('&');
 
-    fetch('http://192.168.0.4:3001/api/user/register', {
+    fetch(preURL.preURL + '/api/user/register', {
       method: 'POST',
       body: formBody,
       headers: {

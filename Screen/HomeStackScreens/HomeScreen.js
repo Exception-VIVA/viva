@@ -24,6 +24,8 @@ import Icon from 'react-native-vector-icons/dist/Ionicons';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
 const HomeScreen = ({navigation}) => {
+  const preURL = require('../../preURL/preURL');
+
   const [userData, setUserData] = useState([]);
   const [workbookData, setWorkbookData] = useState([]);
   const [acabookData, setAcabookData] = useState([]);
@@ -39,7 +41,8 @@ const HomeScreen = ({navigation}) => {
 
   const getUserdata = async (userId) => {
     const response = await fetch(
-      'http://192.168.0.4:3001/api/home?' +
+      preURL.preURL +
+        '/api/home?' +
         new URLSearchParams({
           stu_id: userId,
         }),
@@ -58,7 +61,8 @@ const HomeScreen = ({navigation}) => {
 
   const getWorkbookdata = async (userId) => {
     const response = await fetch(
-      'http://192.168.0.4:3001/api/home/workbook?' +
+      preURL.preURL +
+        '/api/home/workbook?' +
         new URLSearchParams({
           stu_id: userId,
         }),
@@ -81,7 +85,8 @@ const HomeScreen = ({navigation}) => {
 
   const getAcabookdata = async (userId) => {
     const response = await fetch(
-      'http://192.168.0.4:3001/api/home/academy?' +
+      preURL.preURL +
+        '/api/home/academy?' +
         new URLSearchParams({
           stu_id: userId,
         }),
@@ -102,7 +107,8 @@ const HomeScreen = ({navigation}) => {
   };
   const getIncornotedata = async (userId) => {
     const response = await fetch(
-      'http://192.168.0.4:3001/api/home/incor-note?' +
+      preURL.preURL +
+        '/api/home/incor-note?' +
         new URLSearchParams({
           stu_id: userId,
         }),

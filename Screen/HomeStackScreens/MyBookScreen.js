@@ -27,6 +27,8 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 
 const MyBookScreen = ({navigation}) => {
+  const preURL = require('../../preURL/preURL');
+
   const [loading, setLoading] = useState(false);
   const [workbookData, setWorkbookData] = useState([]);
   const [isClick, setIsClick] = useState(false); //to re-render
@@ -40,7 +42,8 @@ const MyBookScreen = ({navigation}) => {
 
   const getWorkbookdata = async (userId) => {
     const response = await fetch(
-      'http://192.168.0.4:3001/api/home/workbook?' +
+      preURL.preURL +
+        '/api/home/workbook?' +
         new URLSearchParams({
           stu_id: userId,
         }),
@@ -91,7 +94,7 @@ const MyBookScreen = ({navigation}) => {
     // console.log(workbook_sn);
     //
     // console.log(
-    //   'http://192.168.0.4:3001/api/book-list/workbook' +
+    //   'http://192.168.123.113:3001/api/book-list/workbook' +
     //     '/' +
     //     workbook_sn +
     //     '?' +
@@ -101,7 +104,8 @@ const MyBookScreen = ({navigation}) => {
     // );
 
     fetch(
-      'http://192.168.0.4:3001/api/book-list/workbook' +
+      preURL.preURL +
+        '/api/book-list/workbook' +
         '/' +
         workbook_sn +
         '?' +
