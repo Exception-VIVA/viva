@@ -72,7 +72,6 @@ const IncorNoteScreen = ({navigation}) => {
   const [pbCountdata, setPbCountdata] = useState([]);
   const [currentNotesn, setCurrentNotesn] = useState('');
   const [noteTitle, setNoteTitle] = useState('');
-  const [noteColor, setNoteColor] = useState('red'); //default
   const [colorURL, setColorURL] = useState('https://i.ibb.co/vsv7pWR/red.png');
 
   const delNoterefRBSheet = useRef();
@@ -856,26 +855,6 @@ const styles = StyleSheet.create({
     marginTop: 0,
     borderWidth: 0,
     borderRadius: 5,
-
-    // shadowColor: '#000',
-    //
-    // elevation: 7,
-    //
-    // ...Platform.select({
-    //   ios: {
-    //     overflow: 'visible',
-    //     shadowColor: '#000',
-    //     shadowOffset: {
-    //       width: 0,
-    //       height: 7,
-    //     },
-    //     shadowOpacity: 0.15,
-    //     shadowRadius: 9.51,
-    //   },
-    //   android: {
-    //     overflow: 'visible',
-    //   },
-    // }),
   },
 
   incor_bookimg: {
