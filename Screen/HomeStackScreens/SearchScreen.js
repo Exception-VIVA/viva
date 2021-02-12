@@ -7,6 +7,7 @@ import {
 
 import 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
+import {showMessage, hideMessage} from 'react-native-flash-message';
 
 import {
   StyleSheet,
@@ -205,6 +206,23 @@ const SearchScreen = ({navigation}) => {
         // If server response message same as Data Matched
         if (responseJson.status === 'success') {
           console.log('inserting book is Successful.');
+
+          //flash message 띄우기
+          if (responseJson.data.isWorkbook === true) {
+            showMessage({
+              message: '"내 문제집"에 문제집이 담겼습니다.',
+              type: 'default',
+              duration: 2500,
+              // autoHide: false,
+            });
+          } else {
+            showMessage({
+              message: '"학원 문제집"에 문제집이 담겼습니다.',
+              type: 'default',
+              duration: 2500,
+              // autoHide: false,
+            });
+          }
         } else {
           console.log('inserting book is fail..');
         }
