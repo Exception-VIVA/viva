@@ -349,7 +349,7 @@ const HomeScreen = ({navigation}) => {
             <TouchableOpacity
               onPress={() => {
                 {
-                  navigation.navigate('Search', {
+                  navigation.navigate('AcademyBook', {
                     stu_id: stuId,
                   });
                 }

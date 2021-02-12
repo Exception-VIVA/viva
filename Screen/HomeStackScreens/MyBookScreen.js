@@ -31,7 +31,6 @@ const MyBookScreen = ({navigation}) => {
 
   const [loading, setLoading] = useState(false);
   const [workbookData, setWorkbookData] = useState([]);
-  const [isClick, setIsClick] = useState(false); //to re-render
   const [currentWorkbooksn, setCurrentWorkbooksn] = useState('');
   const refRBSheet = useRef();
 
@@ -88,21 +87,6 @@ const MyBookScreen = ({navigation}) => {
 
   //localhost:3001/api/book-list/workbook/'삭제할 workbook_sn'?stu_id=samdol
   const delBook = (stuId, workbook_sn) => {
-    // console.log('****stuId****');
-    // console.log(stuId);
-    // console.log('****workbook_sn****');
-    // console.log(workbook_sn);
-    //
-    // console.log(
-    //   'http://192.168.123.113:3001/api/book-list/workbook' +
-    //     '/' +
-    //     workbook_sn +
-    //     '?' +
-    //     new URLSearchParams({
-    //       stu_id: stuId,
-    //     }),
-    // );
-
     fetch(
       preURL.preURL +
         '/api/book-list/workbook' +
