@@ -26,6 +26,44 @@ import {
 
 import AsyncStorage from '@react-native-community/async-storage';
 
+const createincorNoteData = [
+  {
+    id: '1',
+    color: 'red',
+    img: 'https://i.ibb.co/vsv7pWR/red.png',
+  },
+  {
+    id: '2',
+    color: 'yellow',
+
+    img: 'https://i.ibb.co/qY0Rkky/yello.png',
+  },
+  {
+    id: '3',
+    color: 'green',
+
+    img: 'https://i.ibb.co/3mBKH0J/green.png',
+  },
+  {
+    id: '4',
+    color: 'blue',
+
+    img: 'https://i.ibb.co/SfLkVp4/blue.png',
+  },
+  {
+    id: '5',
+    color: 'indigo',
+
+    img: 'https://i.ibb.co/Nnyn1W6/indigo.png',
+  },
+  {
+    id: '6',
+    color: 'purple',
+
+    img: 'https://i.ibb.co/wrxmZSL/purple.png',
+  },
+];
+
 const IncorNoteScreen = ({navigation}) => {
   const preURL = require('../../preURL/preURL');
 
@@ -33,14 +71,20 @@ const IncorNoteScreen = ({navigation}) => {
   const [incorNoteData, setIncorNoteData] = useState([]);
   const [pbCountdata, setPbCountdata] = useState([]);
   const [currentNotesn, setCurrentNotesn] = useState('');
-  const refRBSheet = useRef();
+  const [noteTitle, setNoteTitle] = useState('');
+  const [noteColor, setNoteColor] = useState('red'); //default
+  const [colorURL, setColorURL] = useState('https://i.ibb.co/vsv7pWR/red.png');
+
+  const delNoterefRBSheet = useRef();
+  const updateNoterefRBSheet = useRef();
+  const createNoterefRBSheet = useRef();
 
   const getUserid = async () => {
     const userId = await AsyncStorage.getItem('user_id');
     return userId;
   };
 
-  const getAcabookdata = async (userId) => {
+  const getIncorNotedata = async (userId) => {
     const response = await fetch(
       preURL.preURL +
         '/api/home/incor-note?' +
@@ -54,8 +98,8 @@ const IncorNoteScreen = ({navigation}) => {
     if (response.status === 200) {
       const responseJson = await response.json();
       if (responseJson.status === 'success') {
-        console.log('====fetch return result====');
-        console.log(responseJson.data);
+        // console.log('====fetch return result====');
+        // console.log(responseJson.data);
         return responseJson.data;
       } else if (responseJson.status === 'null') {
         return [];
@@ -68,7 +112,7 @@ const IncorNoteScreen = ({navigation}) => {
   //assemble multi Apifetch functions
   const getMultidata = async () => {
     const userId = await getUserid();
-    const incornotedata = await getAcabookdata(userId);
+    const incornotedata = await getIncorNotedata(userId);
     setIncorNoteData(incornotedata.bookInfo);
     setPbCountdata(incornotedata.pbCount);
     // console.log('==incornote Data!!==');
@@ -77,6 +121,113 @@ const IncorNoteScreen = ({navigation}) => {
     // console.log(pbCountdata);
 
     setLoading(false);
+  };
+
+  //localhost:3001/api/book-list/incor-note/'삭제할 note_sn'?stu_id=samdol
+  const delBook = (stuId, note_sn) => {
+    fetch(
+      preURL.preURL +
+        '/api/book-list/incor-note' +
+        '/' +
+        note_sn +
+        '?' +
+        new URLSearchParams({
+          stu_id: stuId,
+        }),
+      {
+        method: 'DELETE',
+      },
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        //Hide Loader
+        // setLoading(false);
+        console.log(responseJson);
+        // If server response message same as Data Matched
+        if (responseJson.status === 'success') {
+          console.log('deleting book is Successful.');
+        } else {
+          console.log('deleting book is fail..');
+        }
+      })
+      .catch((error) => {
+        //Hide Loader
+        // setLoading(false);
+        console.error(error);
+      });
+  };
+
+  const delBookFull = async (note_sn) => {
+    const userId = await getUserid();
+    const what = await delBook(userId, note_sn);
+    const incornotedata = await getIncorNotedata(userId);
+    setIncorNoteData(incornotedata.bookInfo);
+    setPbCountdata(incornotedata.pbCount);
+
+    showMessage({
+      message: '선택한 오답노트가 삭제되었습니다.',
+      type: 'default',
+      duration: 2500,
+      // autoHide: false,
+    });
+  };
+
+  //localhost:3001/api/book-list/incor-note
+  // body : stu_id,note_name,note_photo
+  const createNote = (stuId) => {
+    var dataToSend = {
+      stu_id: stuId,
+      note_name: noteTitle,
+      note_photo: colorURL,
+    };
+    var formBody = [];
+    for (var key in dataToSend) {
+      var encodedKey = encodeURIComponent(key);
+      var encodedValue = encodeURIComponent(dataToSend[key]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
+
+    fetch(preURL.preURL + '/api/book-list/incor-note', {
+      method: 'POST',
+      body: formBody,
+      headers: {
+        //Header Defination
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        //Hide Loader
+        setLoading(false);
+        console.log(responseJson);
+        // If server response message same as Data Matched
+        if (responseJson.status === 'success') {
+          console.log('create note is Successful.');
+        } else {
+          console.log('create note is fail..');
+        }
+      })
+      .catch((error) => {
+        //Hide Loader
+        setLoading(false);
+        console.error(error);
+      });
+  };
+
+  const createNoteFull = async () => {
+    const userId = await getUserid();
+    const what = await createNote(userId);
+    const incornotedata = await getIncorNotedata(userId);
+    setIncorNoteData(incornotedata.bookInfo);
+    setPbCountdata(incornotedata.pbCount);
+
+    showMessage({
+      message: '오답노트가 생성되었습니다.',
+      type: 'default',
+      duration: 2500,
+      // autoHide: false,
+    });
   };
 
   useEffect(() => {
@@ -107,7 +258,7 @@ const IncorNoteScreen = ({navigation}) => {
           // style={{paddingRight: 20}}
           onPress={() => {
             {
-              //오답노트 생성 bottom sheet code
+              createNoterefRBSheet.current.open();
             }
           }}>
           <Icon name="add-circle" size={30} style={{paddingRight: 15}} />
@@ -148,7 +299,7 @@ const IncorNoteScreen = ({navigation}) => {
               onPress={() => {
                 {
                   setCurrentNotesn(item.note_sn);
-                  refRBSheet.current.open();
+                  delNoterefRBSheet.current.open();
                 }
               }}>
               <Text
@@ -178,8 +329,31 @@ const IncorNoteScreen = ({navigation}) => {
                 수정
               </Text>
             </TouchableOpacity>
+            <TouchableOpacity>
+              <Icon name="download-outline" size={31} />
+            </TouchableOpacity>
           </View>
         </View>
+      </View>
+    );
+  };
+
+  //오답노트 생성 modal flatList item
+  const createincornoteItems = ({item}) => {
+    return (
+      <View>
+        <TouchableOpacity
+          style={[
+            styles.incor_book,
+            {borderWidth: colorURL === item.img ? 2 : 0},
+          ]}
+          onPress={() => {
+            {
+              setColorURL(item.img);
+            }
+          }}>
+          <Image source={{uri: item.img}} style={styles.incor_bookimg} />
+        </TouchableOpacity>
       </View>
     );
   };
@@ -189,9 +363,9 @@ const IncorNoteScreen = ({navigation}) => {
       <SafeAreaView style={{flex: 1}}>
         <Loader loading={loading} />
 
-        {/*취소/삭제 버튼 modal*/}
+        {/*삭제 modal*/}
         <RBSheet
-          ref={refRBSheet}
+          ref={delNoterefRBSheet}
           closeOnDragDown={false}
           closeOnPressMask={true}
           height={hp(22)}
@@ -220,7 +394,7 @@ const IncorNoteScreen = ({navigation}) => {
                   style={styles.delbtnoutline}
                   onPress={() => {
                     {
-                      refRBSheet.current.close();
+                      delNoterefRBSheet.current.close();
                     }
                   }}>
                   <Text>취소</Text>
@@ -232,11 +406,148 @@ const IncorNoteScreen = ({navigation}) => {
                   style={styles.delbtn}
                   onPress={() => {
                     {
-                      // delBookFull(currentWorkbooksn);
-                      refRBSheet.current.close();
+                      delBookFull(currentNotesn);
+                      delNoterefRBSheet.current.close();
                     }
                   }}>
                   <Text style={{color: 'white'}}>삭제</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </RBSheet>
+
+        {/*수정 modal*/}
+        <RBSheet
+          ref={updateNoterefRBSheet}
+          closeOnDragDown={false}
+          closeOnPressMask={true}
+          height={hp(22)}
+          animationType={'fade'}
+          openDuration={30}
+          closeDuration={0}
+          customStyles={{
+            wrapper: {
+              backgroundColor: 'rgba(41, 41, 41, 0.5)',
+            },
+            container: {
+              backgroundColor: 'white',
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+            },
+          }}>
+          <View style={styles.container}>
+            <View style={styles.txtArea}>
+              <Text style={{fontWeight: 'bold', fontSize: wp(4)}}>
+                선택한 문제집을 삭제하시겠어요?
+              </Text>
+            </View>
+            <View style={styles.btnContainer}>
+              <View style={styles.btnArea_l}>
+                <TouchableOpacity
+                  style={styles.delbtnoutline}
+                  onPress={() => {
+                    {
+                      delNoterefRBSheet.current.close();
+                    }
+                  }}>
+                  <Text>취소</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.btnArea_r}>
+                <TouchableOpacity
+                  style={styles.delbtn}
+                  onPress={() => {
+                    {
+                      delBookFull(currentNotesn);
+                      delNoterefRBSheet.current.close();
+                    }
+                  }}>
+                  <Text style={{color: 'white'}}>삭제</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </RBSheet>
+
+        {/*생성 modal*/}
+        <RBSheet
+          ref={createNoterefRBSheet}
+          closeOnDragDown={false}
+          closeOnPressMask={true}
+          height={hp(60)}
+          animationType={'fade'}
+          openDuration={30}
+          closeDuration={0}
+          customStyles={{
+            wrapper: {
+              backgroundColor: 'rgba(41, 41, 41, 0.5)',
+            },
+            container: {
+              backgroundColor: 'white',
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+            },
+          }}>
+          <View style={styles.incor_container}>
+            <View style={[styles.incor_titleArea]}>
+              <Text style={{fontWeight: 'bold', fontSize: wp(4.5)}}>
+                오답노트 생성
+              </Text>
+            </View>
+            <View style={[styles.incor_txtArea]}>
+              <Text style={{fontSize: wp(4.5)}}>이름</Text>
+            </View>
+            <View style={[styles.incor_inputArea]}>
+              <TextInput
+                autoFocus={true}
+                blurOnSubmit={false}
+                enablesReturnKeyAutomatically={true}
+                selectionColor={'black'}
+                style={styles.searchInput}
+                clearButtonMode={'while-editing'}
+                placeholder={'오답노트 이름을 입력해주세요'}
+                onChangeText={(noteTitle) => setNoteTitle(noteTitle)}
+              />
+            </View>
+            <View style={[styles.incor_txtArea]}>
+              <Text style={{fontSize: wp(4.5)}}>표지선택</Text>
+            </View>
+
+            <View style={[styles.incor_noteContainer]}>
+              <FlatList
+                style={styles.list}
+                horizontal={true}
+                data={createincorNoteData}
+                renderItem={createincornoteItems}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            </View>
+
+            <View style={[styles.incor_btnContainer]}>
+              <View style={styles.btnArea_l}>
+                <TouchableOpacity
+                  style={styles.incor_delbtnoutline}
+                  onPress={() => {
+                    {
+                      createNoterefRBSheet.current.close();
+                    }
+                  }}>
+                  <Text style={{fontSize: wp(4)}}>취소</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.incor_btnArea_r}>
+                <TouchableOpacity
+                  style={styles.incor_delbtn}
+                  onPress={() => {
+                    {
+                      createNoteFull();
+                      createNoterefRBSheet.current.close();
+                    }
+                  }}>
+                  <Text style={{color: 'white', fontSize: wp(4)}}>생성</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -425,6 +736,180 @@ const styles = StyleSheet.create({
         paddingTop: hp(1),
       },
     }),
+  },
+
+  //오답노트 MOdal
+
+  incor_container: {
+    flex: 1, //전체의 공간을 차지한다는 의미
+    flexDirection: 'column',
+    backgroundColor: 'white',
+  },
+
+  incor_titleArea: {
+    marginTop: wp(4),
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // paddingTop: hp(2.5),
+    // ...Platform.select({
+    //   ios: {
+    //     paddingTop: hp(1),
+    //   },
+    // }),
+  },
+  incor_txtArea: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    paddingLeft: wp(10),
+
+    // paddingTop: hp(2.5),
+    // ...Platform.select({
+    //   ios: {
+    //     paddingTop: hp(1),
+    //   },
+    // }),
+  },
+  incor_inputArea: {
+    flex: 1,
+    alignItems: 'center',
+    paddingLeft: wp(10),
+    paddingRight: wp(10),
+  },
+
+  searchInput: {
+    fontSize: wp(4.5),
+    borderBottomWidth: 1,
+    width: '100%',
+    ...Platform.select({
+      ios: {
+        height: wp(8),
+      },
+      android: {},
+    }),
+  },
+
+  incor_noteContainer: {
+    paddingLeft: wp(10),
+    // paddingRight: wp(10),
+    paddingBottom: wp(4),
+    flex: 4.5,
+  },
+
+  incor_btnContainer: {
+    flex: 1.5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: hp(1),
+
+    ...Platform.select({
+      ios: {
+        paddingBottom: hp(2.5),
+      },
+    }),
+  },
+
+  incor_btnArea_l: {
+    // backgroundColor: 'orange',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  incor_btnArea_r: {
+    // backgroundColor: 'blue',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    // marginRight: wp(10),
+  },
+
+  incor_delbtnoutline: {
+    margin: wp(6),
+    marginRight: wp(2),
+    width: wp(33),
+    height: hp(5),
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderWidth: 1,
+  },
+  incor_delbtn: {
+    margin: wp(6),
+    marginLeft: wp(2),
+    width: wp(33),
+    height: hp(5),
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    borderWidth: 1,
+  },
+
+  incor_book: {
+    width: wp(37),
+    height: wp(50),
+    marginRight: wp(5),
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 0,
+    borderWidth: 0,
+    borderRadius: 5,
+
+    // shadowColor: '#000',
+    //
+    // elevation: 7,
+    //
+    // ...Platform.select({
+    //   ios: {
+    //     overflow: 'visible',
+    //     shadowColor: '#000',
+    //     shadowOffset: {
+    //       width: 0,
+    //       height: 7,
+    //     },
+    //     shadowOpacity: 0.15,
+    //     shadowRadius: 9.51,
+    //   },
+    //   android: {
+    //     overflow: 'visible',
+    //   },
+    // }),
+  },
+
+  incor_bookimg: {
+    resizeMode: 'cover',
+    // borderRadius: 5,
+    ...Platform.select({
+      ios: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 5,
+      },
+      android: {
+        width: '100%',
+        height: hp(20),
+      },
+    }),
+  },
+
+  //color
+  red: {backgroundColor: 'rgba(235,87,87,0.5)'},
+  orange: {
+    backgroundColor: 'rgba(242,153,74,0.5)',
+  },
+  yellow: {
+    backgroundColor: 'rgba(242,201,76,0.5)',
+  },
+  green: {
+    backgroundColor: 'rgba(39,174,96,0.5)',
+  },
+  blue: {
+    backgroundColor: 'rgba(47,128,237,0.5)',
+  },
+  purple: {
+    backgroundColor: 'rgba(155,81,224,0.5)',
   },
 });
 
