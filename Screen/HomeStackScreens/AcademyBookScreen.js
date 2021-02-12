@@ -67,7 +67,7 @@ const AcademyBookScreen = ({navigation}) => {
     const userId = await getUserid();
     const acabookdata = await getAcabookdata(userId);
     setAcabookData(acabookdata);
-    // setLoading(false);
+    setLoading(false);
   };
 
   //localhost:3001/api/book-list/academy/'삭제할 workbook_sn'?stu_id=samdol
@@ -119,7 +119,7 @@ const AcademyBookScreen = ({navigation}) => {
   };
 
   useEffect(() => {
-    // setLoading(true);
+    setLoading(true);
     getMultidata();
   }, []);
 
@@ -196,6 +196,8 @@ const AcademyBookScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1}}>
+        <Loader loading={loading} />
+
         {/*취소/삭제 버튼 modal*/}
         <RBSheet
           ref={refRBSheet}

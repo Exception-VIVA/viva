@@ -68,7 +68,7 @@ const MyBookScreen = ({navigation}) => {
     const userId = await getUserid();
     const workbookdata = await getWorkbookdata(userId);
     setWorkbookData(workbookdata);
-    // setLoading(false);
+    setLoading(false);
   };
 
   const delBookFull = async (workbook_sn) => {
@@ -120,7 +120,7 @@ const MyBookScreen = ({navigation}) => {
   };
 
   useEffect(() => {
-    // setLoading(true);
+    setLoading(true);
     getMultidata();
   }, []);
 
@@ -197,6 +197,8 @@ const MyBookScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1}}>
+        <Loader loading={loading} />
+
         {/*취소/삭제 버튼 modal*/}
         <RBSheet
           ref={refRBSheet}

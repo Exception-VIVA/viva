@@ -1,4 +1,4 @@
-import React, {useState, createRef} from 'react';
+import React, {useState, useEffect, useLayoutEffect, useRef} from 'react';
 
 import {
   widthPercentageToDP as wp,
@@ -7,14 +7,252 @@ import {
 
 import 'react-native-gesture-handler';
 import Loader from '../Components/Loader';
-import {StyleSheet, View, Text} from 'react-native';
+import Icon from 'react-native-vector-icons/dist/Ionicons';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import {showMessage, hideMessage} from 'react-native-flash-message';
+
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  TextInput,
+  Platform,
+  FlatList,
+  SafeAreaView,
+  ScrollView,
+} from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
 const IncorNoteScreen = ({navigation}) => {
+  const preURL = require('../../preURL/preURL');
+
+  const [loading, setLoading] = useState(false);
+  const [incorNoteData, setIncorNoteData] = useState([]);
+  const [pbCountdata, setPbCountdata] = useState([]);
+  const [currentNotesn, setCurrentNotesn] = useState('');
+  const refRBSheet = useRef();
+
+  const getUserid = async () => {
+    const userId = await AsyncStorage.getItem('user_id');
+    return userId;
+  };
+
+  const getAcabookdata = async (userId) => {
+    const response = await fetch(
+      preURL.preURL +
+        '/api/home/incor-note?' +
+        new URLSearchParams({
+          stu_id: userId,
+        }),
+      {
+        method: 'GET',
+      },
+    );
+    if (response.status === 200) {
+      const responseJson = await response.json();
+      if (responseJson.status === 'success') {
+        console.log('====fetch return result====');
+        console.log(responseJson.data);
+        return responseJson.data;
+      } else if (responseJson.status === 'null') {
+        return [];
+      }
+    } else {
+      throw new Error('unable to get your Workbook');
+    }
+  };
+
+  //assemble multi Apifetch functions
+  const getMultidata = async () => {
+    const userId = await getUserid();
+    const incornotedata = await getAcabookdata(userId);
+    setIncorNoteData(incornotedata.bookInfo);
+    setPbCountdata(incornotedata.pbCount);
+    // console.log('==incornote Data!!==');
+    // console.log(incorNoteData);
+    // console.log('==pbCount Data!!==');
+    // console.log(pbCountdata);
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    getMultidata();
+  }, []);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitleAlign: 'left',
+      headerTitle: () => <Text style={styles.title}>오답노트</Text>,
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => {
+            {
+              navigation.replace('Home');
+            }
+          }}>
+          <Icon
+            name="chevron-back-outline"
+            size={33}
+            style={{paddingLeft: 10}}
+          />
+        </TouchableOpacity>
+      ),
+      headerRight: () => (
+        <TouchableOpacity
+          // style={{paddingRight: 20}}
+          onPress={() => {
+            {
+              //오답노트 생성 bottom sheet code
+            }
+          }}>
+          <Icon name="add-circle" size={30} style={{paddingRight: 15}} />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
+
+  const resultBookItems = ({item, index}) => {
+    return (
+      <View style={styles.resultitem_container}>
+        <Loader loading={loading} />
+        <View style={styles.resultitem_book_container}>
+          <View style={styles.book}>
+            <Image source={{uri: item.note_photo}} style={styles.bookimg} />
+          </View>
+        </View>
+
+        <View style={styles.resultitem_info_container}>
+          <View style={styles.info_top}>
+            <Text style={{fontSize: wp(4.5)}}>{item.note_name}</Text>
+          </View>
+          <View style={styles.info_mid}>
+            <Icon
+              name="file-tray-full-outline"
+              size={20}
+              style={{paddingRight: wp(1), paddingLeft: wp(1)}}
+            />
+            <Text style={{paddingRight: wp(3)}}>{pbCountdata[index]}문제</Text>
+            <Icon style={{paddingRight: wp(1)}} name="time-outline" size={20} />
+            <Text style={{paddingRight: wp(3)}}>
+              {item.note_date.substring(0, 10)}
+            </Text>
+          </View>
+          <View style={styles.info_bottom}>
+            <TouchableOpacity
+              style={[styles.btn]}
+              onPress={() => {
+                {
+                  setCurrentNotesn(item.note_sn);
+                  refRBSheet.current.open();
+                }
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: wp('3.5'),
+                  fontWeight: 'bold',
+                }}>
+                삭제
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.btn]}
+              onPress={() => {
+                {
+                  setCurrentNotesn(item.note_sn);
+                  // refRBSheet.current.open();
+                  //다른 sheet 여는 code
+                }
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: wp('3.5'),
+                  fontWeight: 'bold',
+                }}>
+                수정
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <Text>this is IncorNoteScreen</Text>
+      <SafeAreaView style={{flex: 1}}>
+        <Loader loading={loading} />
+
+        {/*취소/삭제 버튼 modal*/}
+        <RBSheet
+          ref={refRBSheet}
+          closeOnDragDown={false}
+          closeOnPressMask={true}
+          height={hp(22)}
+          animationType={'fade'}
+          openDuration={30}
+          closeDuration={0}
+          customStyles={{
+            wrapper: {
+              backgroundColor: 'rgba(41, 41, 41, 0.5)',
+            },
+            container: {
+              backgroundColor: 'white',
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+            },
+          }}>
+          <View style={styles.container}>
+            <View style={styles.txtArea}>
+              <Text style={{fontWeight: 'bold', fontSize: wp(4)}}>
+                선택한 문제집을 삭제하시겠어요?
+              </Text>
+            </View>
+            <View style={styles.btnContainer}>
+              <View style={styles.btnArea_l}>
+                <TouchableOpacity
+                  style={styles.delbtnoutline}
+                  onPress={() => {
+                    {
+                      refRBSheet.current.close();
+                    }
+                  }}>
+                  <Text>취소</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.btnArea_r}>
+                <TouchableOpacity
+                  style={styles.delbtn}
+                  onPress={() => {
+                    {
+                      // delBookFull(currentWorkbooksn);
+                      refRBSheet.current.close();
+                    }
+                  }}>
+                  <Text style={{color: 'white'}}>삭제</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </RBSheet>
+
+        <View>
+          <FlatList
+            style={styles.list}
+            horizontal={false}
+            data={incorNoteData}
+            renderItem={resultBookItems}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
+      </SafeAreaView>
     </View>
   );
 };
@@ -24,31 +262,169 @@ const styles = StyleSheet.create({
     flex: 1, //전체의 공간을 차지한다는 의미
     flexDirection: 'column',
     backgroundColor: 'white',
-    paddingLeft: wp(7),
-    paddingRight: wp(7),
   },
-  topArea: {
+  title: {
+    fontSize: wp('4%'),
+    fontWeight: 'bold',
+  },
+
+  resultitem_container: {
     flex: 1,
-    paddingTop: wp(2),
+    flexDirection: 'row',
+    height: hp(25),
+    borderBottomWidth: 0.5,
+    borderColor: 'lightgrey',
+    padding: wp(7),
+
+    ...Platform.select({
+      android: {
+        width: '100%',
+        height: hp(27),
+      },
+    }),
   },
-  titleArea: {
-    flex: 0.7,
-    justifyContent: 'center',
-    paddingTop: wp(3),
+  resultitem_book_container: {
+    flex: 1,
   },
-  TextArea: {
-    flex: 0.3,
+  resultitem_info_container: {
+    flex: 2,
+    flexDirection: 'column',
+  },
+  info_top: {
+    paddingLeft: wp(4),
+    flex: 3.5,
+  },
+  info_mid: {
+    paddingLeft: wp(4),
+    paddingBottom: wp(2),
+    flex: 1.5,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  info_bottom: {
+    flex: 1.5,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    paddingLeft: wp(4),
+    alignItems: 'center',
+  },
+  book: {
+    alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 0,
+    borderWidth: 0,
+    borderRadius: 5,
+    shadowColor: '#000',
+
+    elevation: 7,
+
+    ...Platform.select({
+      ios: {
+        overflow: 'visible',
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 7,
+        },
+        shadowOpacity: 0.15,
+        shadowRadius: 9.51,
+      },
+      android: {
+        overflow: 'visible',
+      },
+    }),
+  },
+  bookimg: {
+    resizeMode: 'cover',
+    borderRadius: 5,
+    ...Platform.select({
+      ios: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 5,
+      },
+      android: {
+        width: '100%',
+        height: hp(20),
+      },
+    }),
+  },
+  btn: {
+    width: wp(22),
+    height: '100%',
+    borderRadius: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    marginRight: wp(3),
+  },
+  delbtnoutline: {
+    margin: wp(6),
+    marginRight: wp(2),
+    width: wp(33),
+    height: hp(5),
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'white',
+    borderWidth: 1,
   },
-  Text: {
-    fontSize: wp('4%'),
-    paddingBottom: wp('1%'),
+  delbtn: {
+    margin: wp(6),
+    marginLeft: wp(2),
+    width: wp(33),
+    height: hp(5),
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    borderWidth: 1,
   },
-  TextValidation: {
-    fontSize: wp('4%'),
-    color: 'red',
-    paddingTop: wp(2),
+  grey: {
+    backgroundColor: '#C1C2CA',
+  },
+
+  emptyResult: {
+    height: wp(100),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  btnContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: hp(1.5),
+
+    ...Platform.select({
+      ios: {
+        paddingBottom: hp(4.5),
+      },
+    }),
+  },
+  btnArea_l: {
+    // backgroundColor: 'orange',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  btnArea_r: {
+    // backgroundColor: 'blue',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    // marginRight: wp(10),
+  },
+
+  txtArea: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: hp(2.5),
+    ...Platform.select({
+      ios: {
+        paddingTop: hp(1),
+      },
+    }),
   },
 });
 

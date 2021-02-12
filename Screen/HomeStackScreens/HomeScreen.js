@@ -378,7 +378,7 @@ const HomeScreen = ({navigation}) => {
             <TouchableOpacity
               onPress={() => {
                 {
-                  navigation.navigate('Search', {
+                  navigation.navigate('IncorNote', {
                     stu_id: stuId,
                   });
                 }
