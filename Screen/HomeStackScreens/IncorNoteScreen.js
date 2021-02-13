@@ -346,9 +346,18 @@ const IncorNoteScreen = ({navigation}) => {
       <View style={styles.resultitem_container}>
         <Loader loading={loading} />
         <View style={styles.resultitem_book_container}>
-          <View style={styles.book}>
+          <TouchableOpacity
+            style={styles.book}
+            onPress={() => {
+              {
+                navigation.navigate('IncorNoteRead', {
+                  note_sn: item.note_sn,
+                  note_name: item.note_name,
+                });
+              }
+            }}>
             <Image source={{uri: item.note_photo}} style={styles.bookimg} />
-          </View>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.resultitem_info_container}>

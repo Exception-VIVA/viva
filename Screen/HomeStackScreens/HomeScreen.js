@@ -948,5 +948,10 @@ const styles = StyleSheet.create({
       },
     }),
   },
+  emptyResult: {
+    height: wp(100),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 export default HomeScreen;
