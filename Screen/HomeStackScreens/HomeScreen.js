@@ -302,7 +302,16 @@ const HomeScreen = ({navigation}) => {
 
   const incornoteItems = ({item}) => {
     return (
-      <TouchableOpacity style={styles.book}>
+      <TouchableOpacity
+        style={styles.book}
+        onPress={() => {
+          {
+            navigation.navigate('IncorNoteRead', {
+              note_sn: item.note_sn,
+              note_name: item.note_name,
+            });
+          }
+        }}>
         <Image source={{uri: item.note_photo}} style={styles.bookimg} />
       </TouchableOpacity>
     );
@@ -552,7 +561,7 @@ const HomeScreen = ({navigation}) => {
             </View>
 
             <View style={[styles.incor_btnContainer]}>
-              <View style={styles.btnArea_l}>
+              <View style={styles.incor_btnArea_l}>
                 <TouchableOpacity
                   style={styles.incor_delbtnoutline}
                   onPress={() => {

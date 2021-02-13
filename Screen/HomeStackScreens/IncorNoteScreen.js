@@ -548,7 +548,7 @@ const IncorNoteScreen = ({navigation}) => {
             </View>
 
             <View style={[styles.incor_btnContainer]}>
-              <View style={styles.btnArea_l}>
+              <View style={styles.incor_btnArea_l}>
                 <TouchableOpacity
                   style={styles.incor_delbtnoutline}
                   onPress={() => {

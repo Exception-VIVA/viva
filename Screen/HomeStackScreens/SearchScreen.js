@@ -86,6 +86,7 @@ const SearchScreen = ({navigation}) => {
   useEffect(() => {
     const userId = getUserid();
     navigation.setOptions({
+      // tabBarVisible: false,
       headerTitleAlign: 'left',
       headerTitle: () => (
         <TextInput

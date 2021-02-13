@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useLayoutEffect} from 'react';
 import FlashMessage from 'react-native-flash-message';
 
 import {
@@ -14,6 +14,7 @@ import {
 } from 'react-native-responsive-screen';
 
 import Icon from 'react-native-vector-icons/dist/Ionicons';
+import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 
 import SplashScreen from './Screen/SplashScreen';
 import LoginScreen from './Screen/LoginScreen';
@@ -40,7 +41,6 @@ import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 const TestStack = createStackNavigator();
@@ -58,7 +58,17 @@ const Tab = createBottomTabNavigator();
 //   );
 // }
 
-const HomeStackScreen = () => {
+const HomeStackScreen = ({navigation, route}) => {
+  const routeName = getFocusedRouteNameFromRoute(route);
+
+  useLayoutEffect(() => {
+    if (routeName === 'Home') {
+      navigation.setOptions({tabBarVisible: true});
+    } else {
+      navigation.setOptions({tabBarVisible: false});
+    }
+  }, [navigation, route]);
+
   return (
     <Stack.Navigator>
       <HomeStack.Screen
@@ -71,18 +81,11 @@ const HomeStackScreen = () => {
               source={require('./src/viva-header-logo.png')}
             />
           ),
+          tabBarVisible: false,
         })}
         component={HomeScreen}
       />
-      <HomeStack.Screen
-        name="Search"
-        // options={{
-        //   title: '',
-        //   headerBackTitleVisible: false,
-        //   headerBackImage: BackBtn,
-        // }}
-        component={SearchScreen}
-      />
+      <HomeStack.Screen name="Search" component={SearchScreen} />
       <HomeStack.Screen name="SearchResult" component={SearchResultScreen} />
       <HomeStack.Screen name="MyBook" component={MyBookScreen} />
       <HomeStack.Screen name="AcademyBook" component={AcademyBookScreen} />

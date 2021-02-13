@@ -1,4 +1,4 @@
-import React, {useState, createRef} from 'react';
+import React, {useState, createRef, useEffect} from 'react';
 
 import {
   widthPercentageToDP as wp,
@@ -11,15 +11,54 @@ import {StyleSheet, View, Text} from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
-const IncorNoteReadScreen = ({navigation}) => {
+import Swiper from 'react-native-swiper';
+
+const IncorNoteReadScreen = ({route, navigation}) => {
+  useEffect(() => {
+    console.log(route.params);
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>this is IncorNoteReadScreen</Text>
-    </View>
+    <Swiper style={styles.wrapper} showsButtons={true}>
+      <View style={styles.slide1}>
+        <Text style={styles.text}>Hello Swiper</Text>
+      </View>
+      <View style={styles.slide2}>
+        <Text style={styles.text}>Beautiful</Text>
+      </View>
+      <View style={styles.slide3}>
+        <Text style={styles.text}>And simple</Text>
+      </View>
+    </Swiper>
   );
 };
 
 const styles = StyleSheet.create({
+  wrapper: {},
+  slide1: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#9DD6EB',
+  },
+  slide2: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#97CAE5',
+  },
+  slide3: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#92BBD9',
+  },
+  text: {
+    color: '#fff',
+    fontSize: 30,
+    fontWeight: 'bold',
+  },
+
   container: {
     flex: 1, //전체의 공간을 차지한다는 의미
     flexDirection: 'column',
