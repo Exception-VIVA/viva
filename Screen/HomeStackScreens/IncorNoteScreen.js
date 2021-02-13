@@ -72,6 +72,7 @@ const IncorNoteScreen = ({navigation}) => {
   const [pbCountdata, setPbCountdata] = useState([]);
   const [currentNotesn, setCurrentNotesn] = useState('');
   const [noteTitle, setNoteTitle] = useState('');
+  const [noteTitlebefore, setNoteTitlebefore] = useState('');
   const [colorURL, setColorURL] = useState('https://i.ibb.co/vsv7pWR/red.png');
 
   const delNoterefRBSheet = useRef();
@@ -157,11 +158,15 @@ const IncorNoteScreen = ({navigation}) => {
   };
 
   const delBookFull = async (note_sn) => {
+    setLoading(true);
+
     const userId = await getUserid();
     const what = await delBook(userId, note_sn);
     const incornotedata = await getIncorNotedata(userId);
     setIncorNoteData(incornotedata.bookInfo);
     setPbCountdata(incornotedata.pbCount);
+
+    setLoading(false);
 
     showMessage({
       message: '선택한 오답노트가 삭제되었습니다.',
@@ -215,14 +220,84 @@ const IncorNoteScreen = ({navigation}) => {
   };
 
   const createNoteFull = async () => {
+    setLoading(true);
     const userId = await getUserid();
     const what = await createNote(userId);
+
+    const incornotedata = await getIncorNotedata(userId);
+    setIncorNoteData(incornotedata.bookInfo);
+    setPbCountdata(incornotedata.pbCount);
+    setLoading(false);
+
+    showMessage({
+      message: '오답노트가 생성되었습니다.',
+      type: 'default',
+      duration: 2500,
+      // autoHide: false,
+    });
+  };
+
+  //localhost:3001/api/book-list/incor-note/'삭제할 note_sn'?stu_id=samdol
+  //localhost:3001/api/book-list/incor-note/'수정할 note_sn'?stu_id=samdol
+
+  //body : stu_id,note_name,note_photo
+  const updateBook = (stuId, note_sn) => {
+    var dataToSend = {
+      stu_id: stuId,
+      note_name: noteTitle,
+      note_photo: colorURL,
+    };
+    var formBody = [];
+    for (var key in dataToSend) {
+      var encodedKey = encodeURIComponent(key);
+      var encodedValue = encodeURIComponent(dataToSend[key]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
+
+    console.log(preURL.preURL + '/api/book-list/incor-note/' + note_sn);
+
+    fetch(preURL.preURL + '/api/book-list/incor-note/' + note_sn, {
+      method: 'PUT',
+      body: formBody,
+      headers: {
+        //Header Defination
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        //Hide Loader
+        setLoading(false);
+        console.log(responseJson);
+        // If server response message same as Data Matched
+        if (responseJson.status === 'success') {
+          console.log('update note is Successful.');
+        } else {
+          console.log('update note is fail..');
+        }
+      })
+      .catch((error) => {
+        //Hide Loader
+        setLoading(false);
+        console.error(error);
+      });
+  };
+
+  const updateBookFull = async (note_sn) => {
+    setLoading(true);
+
+    const userId = await getUserid();
+    const what = await updateBook(userId, note_sn);
+
     const incornotedata = await getIncorNotedata(userId);
     setIncorNoteData(incornotedata.bookInfo);
     setPbCountdata(incornotedata.pbCount);
 
+    setLoading(false);
+
     showMessage({
-      message: '오답노트가 생성되었습니다.',
+      message: '오답노트가 수정되었습니다.',
       type: 'default',
       duration: 2500,
       // autoHide: false,
@@ -314,9 +389,11 @@ const IncorNoteScreen = ({navigation}) => {
               style={[styles.btn]}
               onPress={() => {
                 {
+                  setNoteTitlebefore(item.note_name);
                   setCurrentNotesn(item.note_sn);
-                  // refRBSheet.current.open();
-                  //다른 sheet 여는 code
+                  setColorURL(item.note_photo);
+                  setNoteTitle(item.note_name);
+                  updateNoterefRBSheet.current.open();
                 }
               }}>
               <Text
@@ -421,7 +498,7 @@ const IncorNoteScreen = ({navigation}) => {
           ref={updateNoterefRBSheet}
           closeOnDragDown={false}
           closeOnPressMask={true}
-          height={hp(22)}
+          height={hp(60)}
           animationType={'fade'}
           openDuration={30}
           closeDuration={0}
@@ -435,35 +512,64 @@ const IncorNoteScreen = ({navigation}) => {
               borderTopRightRadius: 30,
             },
           }}>
-          <View style={styles.container}>
-            <View style={styles.txtArea}>
-              <Text style={{fontWeight: 'bold', fontSize: wp(4)}}>
-                선택한 문제집을 삭제하시겠어요?
+          <View style={styles.incor_container}>
+            <View style={[styles.incor_titleArea]}>
+              <Text style={{fontWeight: 'bold', fontSize: wp(4.5)}}>
+                오답노트 수
               </Text>
             </View>
-            <View style={styles.btnContainer}>
+            <View style={[styles.incor_txtArea]}>
+              <Text style={{fontSize: wp(4.5)}}>이름</Text>
+            </View>
+            <View style={[styles.incor_inputArea]}>
+              <TextInput
+                autoFocus={true}
+                blurOnSubmit={false}
+                enablesReturnKeyAutomatically={true}
+                selectionColor={'black'}
+                style={styles.searchInput}
+                clearButtonMode={'while-editing'}
+                placeholder={noteTitlebefore}
+                onChangeText={(noteTitle) => setNoteTitle(noteTitle)}
+              />
+            </View>
+            <View style={[styles.incor_txtArea]}>
+              <Text style={{fontSize: wp(4.5)}}>표지선택</Text>
+            </View>
+
+            <View style={[styles.incor_noteContainer]}>
+              <FlatList
+                style={styles.list}
+                horizontal={true}
+                data={createincorNoteData}
+                renderItem={createincornoteItems}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            </View>
+
+            <View style={[styles.incor_btnContainer]}>
               <View style={styles.btnArea_l}>
                 <TouchableOpacity
-                  style={styles.delbtnoutline}
+                  style={styles.incor_delbtnoutline}
                   onPress={() => {
                     {
-                      delNoterefRBSheet.current.close();
+                      updateNoterefRBSheet.current.close();
                     }
                   }}>
-                  <Text>취소</Text>
+                  <Text style={{fontSize: wp(4)}}>취소</Text>
                 </TouchableOpacity>
               </View>
 
-              <View style={styles.btnArea_r}>
+              <View style={styles.incor_btnArea_r}>
                 <TouchableOpacity
-                  style={styles.delbtn}
+                  style={styles.incor_delbtn}
                   onPress={() => {
                     {
-                      delBookFull(currentNotesn);
-                      delNoterefRBSheet.current.close();
+                      updateBookFull(currentNotesn);
+                      updateNoterefRBSheet.current.close();
                     }
                   }}>
-                  <Text style={{color: 'white'}}>삭제</Text>
+                  <Text style={{color: 'white', fontSize: wp(4)}}>수정</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -855,6 +961,13 @@ const styles = StyleSheet.create({
     marginTop: 0,
     borderWidth: 0,
     borderRadius: 5,
+
+    ...Platform.select({
+      android: {
+        width: wp(30),
+        height: wp(40),
+      },
+    }),
   },
 
   incor_bookimg: {
@@ -868,7 +981,7 @@ const styles = StyleSheet.create({
       },
       android: {
         width: '100%',
-        height: hp(20),
+        height: '100%',
       },
     }),
   },

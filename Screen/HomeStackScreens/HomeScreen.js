@@ -915,6 +915,13 @@ const styles = StyleSheet.create({
     marginTop: 0,
     borderWidth: 0,
     borderRadius: 5,
+
+    ...Platform.select({
+      android: {
+        width: wp(30),
+        height: wp(40),
+      },
+    }),
   },
 
   incor_bookimg: {
@@ -928,7 +935,7 @@ const styles = StyleSheet.create({
       },
       android: {
         width: '100%',
-        height: hp(20),
+        height: '100%',
       },
     }),
   },
