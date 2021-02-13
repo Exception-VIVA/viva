@@ -1,4 +1,10 @@
-import React, {useState, createRef, useEffect, useLayoutEffect} from 'react';
+import React, {
+  useState,
+  createRef,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 
 import {
   widthPercentageToDP as wp,
@@ -35,6 +41,9 @@ const IncorNoteReadScreen = ({route, navigation}) => {
   const preURL = require('../../preURL/preURL');
   const [loading, setLoading] = useState(false);
   const [incorPbData, setIncorPbData] = useState([]);
+  const [delPbindex, setDelPbindex] = useState([]);
+
+  const delNoterefRBSheet = useRef();
 
   const getUserid = async () => {
     const userId = await AsyncStorage.getItem('user_id');
@@ -75,6 +84,63 @@ const IncorNoteReadScreen = ({route, navigation}) => {
     setLoading(false);
   };
 
+  //localhost:3001/api/incor-note-content/0?note_sn=1&stu_id=samdol
+  //문제 삭제하기
+  const delPb = (stuId) => {
+    fetch(
+      preURL.preURL +
+        '/api/incor-note-content' +
+        '/' +
+        delPbindex +
+        '?' +
+        new URLSearchParams({
+          stu_id: stuId,
+          note_sn: note_sn, //navigation param으로 받아온
+        }),
+      {
+        method: 'DELETE',
+      },
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        //Hide Loader
+        // setLoading(false);
+        console.log(responseJson);
+        // If server response message same as Data Matched
+        if (responseJson.status === 'success') {
+          console.log('deleting pb is Successful.');
+        } else {
+          console.log('deleting pb is fail..');
+        }
+      })
+      .catch((error) => {
+        //Hide Loader
+        // setLoading(false);
+        console.error(error);
+      });
+  };
+
+  const delPbFull = async () => {
+    setLoading(true);
+
+    const userId = await getUserid();
+    const what = await delPb(userId);
+
+    //rerender
+    const incorpbData = await getIncorPbdata(userId);
+    setIncorPbData(incorpbData);
+    setLoading(false);
+
+    setLoading(false);
+
+    showMessage({
+      message: '문제가 삭제되었습니다.',
+      type: 'default',
+      duration: 2500,
+      // autoHide: false,
+    });
+  };
+
   useEffect(() => {
     getIncorPbdataFull();
   }, []);
@@ -82,7 +148,7 @@ const IncorNoteReadScreen = ({route, navigation}) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitleAlign: 'left',
-      headerTitle: () => <Text style={styles.ft_title}>{note_name}</Text>,
+      headerTitle: () => <Text style={styles.ft_title2}>{note_name}</Text>,
       headerLeft: () => (
         <TouchableOpacity
           onPress={() => {
@@ -97,25 +163,24 @@ const IncorNoteReadScreen = ({route, navigation}) => {
           />
         </TouchableOpacity>
       ),
-      headerRight: () => (
-        <TouchableOpacity
-          // style={{paddingRight: 20}}
-          onPress={() => {
-            {
-              //삭제가 필요한데
-            }
-          }}>
-          <Icon name="trash-outline" size={30} style={{paddingRight: 15}} />
-        </TouchableOpacity>
-      ),
     });
   }, []);
 
   const incorPbItems = ({item, index}) => {
     return (
       <View nestedScrollEnabled={true} style={styles.item_container}>
-        <View style={styles.item_title}>
+        <View style={styles.item_title_pb}>
           <Text style={styles.ft_title2}>문제</Text>
+          <TouchableOpacity
+            // style={{paddingRight: 20}}
+            onPress={() => {
+              {
+                setDelPbindex(index);
+                delNoterefRBSheet.current.open();
+              }
+            }}>
+            <Icon name="trash-outline" size={27} style={{}} />
+          </TouchableOpacity>
         </View>
 
         <ScrollView
@@ -197,6 +262,59 @@ const IncorNoteReadScreen = ({route, navigation}) => {
         keyExtractor={(item, index) => index.toString()}
         ListEmptyComponent={emptyPb}
       />
+      {/*삭제 modal*/}
+      <RBSheet
+        ref={delNoterefRBSheet}
+        closeOnDragDown={false}
+        closeOnPressMask={true}
+        height={hp(22)}
+        animationType={'fade'}
+        openDuration={30}
+        closeDuration={0}
+        customStyles={{
+          wrapper: {
+            backgroundColor: 'rgba(41, 41, 41, 0.5)',
+          },
+          container: {
+            backgroundColor: 'white',
+            borderTopLeftRadius: 30,
+            borderTopRightRadius: 30,
+          },
+        }}>
+        <View style={styles.container}>
+          <View style={styles.txtArea}>
+            <Text style={{fontWeight: 'bold', fontSize: wp(4)}}>
+              이 문제를 오답노트에서 삭제하시겠어요?
+            </Text>
+          </View>
+          <View style={styles.btnContainer}>
+            <View style={styles.btnArea_l}>
+              <TouchableOpacity
+                style={styles.delbtnoutline}
+                onPress={() => {
+                  {
+                    delNoterefRBSheet.current.close();
+                  }
+                }}>
+                <Text>취소</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.btnArea_r}>
+              <TouchableOpacity
+                style={styles.delbtn}
+                onPress={() => {
+                  {
+                    delPbFull();
+                    delNoterefRBSheet.current.close();
+                  }
+                }}>
+                <Text style={{color: 'white'}}>삭제</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </RBSheet>
     </View>
   );
 };
@@ -216,6 +334,14 @@ const styles = StyleSheet.create({
     // flexGrow: 0,
   },
 
+  item_title_pb: {
+    flexDirection: 'row',
+    paddingLeft: wp(4),
+    paddingRight: wp(4),
+    marginBottom: hp(1),
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   item_title: {
     paddingLeft: wp(4),
     paddingRight: wp(4),
@@ -270,7 +396,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ft_title: {
-    fontSize: wp('4%'),
+    fontSize: wp('4.5%'),
     fontWeight: 'bold',
   },
   ft_title2: {
@@ -287,6 +413,66 @@ const styles = StyleSheet.create({
     height: wp(100),
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  //삭제 modal
+  txtArea: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: hp(2.5),
+    ...Platform.select({
+      ios: {
+        paddingTop: hp(1),
+      },
+    }),
+  },
+  btnContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: hp(1.5),
+
+    ...Platform.select({
+      ios: {
+        paddingBottom: hp(4.5),
+      },
+    }),
+  },
+  btnArea_l: {
+    // backgroundColor: 'orange',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  btnArea_r: {
+    // backgroundColor: 'blue',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    // marginRight: wp(10),
+  },
+  delbtnoutline: {
+    margin: wp(6),
+    marginRight: wp(2),
+    width: wp(33),
+    height: hp(5),
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderWidth: 1,
+  },
+  delbtn: {
+    margin: wp(6),
+    marginLeft: wp(2),
+    width: wp(33),
+    height: hp(5),
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    borderWidth: 1,
   },
 });
 
