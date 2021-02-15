@@ -28,12 +28,11 @@ import {
 
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
-import AutoHeightImage from 'react-native-auto-height-image';
 
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {showMessage} from 'react-native-flash-message';
-
-import Swiper from 'react-native-swiper';
+import 'react-native-gesture-handler';
+import AutoHeightImage from 'react-native-auto-height-image';
 
 const IncorNoteReadScreen = ({route, navigation}) => {
   const {note_sn, note_name} = route.params;
@@ -243,7 +242,7 @@ const IncorNoteReadScreen = ({route, navigation}) => {
           style={{height: hp(8), color: 'grey'}}
         />
         <Text style={{fontSize: wp(4), color: 'grey'}}>
-          문제가 존재하지 않습니다.
+          오답노트가 비어있습니다.
         </Text>
       </View>
     );
