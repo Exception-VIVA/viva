@@ -22,9 +22,11 @@ import {
   FlatList,
   SafeAreaView,
   ScrollView,
+  PermissionsAndroid,
 } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
 
 const createincorNoteData = [
   {
@@ -67,6 +69,7 @@ const createincorNoteData = [
 const IncorNoteScreen = ({navigation}) => {
   const preURL = require('../../preURL/preURL');
 
+  const [filePath, setFilePath] = useState('');
   const [loading, setLoading] = useState(false);
   const [incorNoteData, setIncorNoteData] = useState([]);
   const [pbCountdata, setPbCountdata] = useState([]);
@@ -78,6 +81,43 @@ const IncorNoteScreen = ({navigation}) => {
   const delNoterefRBSheet = useRef();
   const updateNoterefRBSheet = useRef();
   const createNoterefRBSheet = useRef();
+
+  const isPermitted = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'External Storage Write Permission',
+            message: 'App needs access to Storage data',
+          },
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        alert('Write permission err', err);
+        return false;
+      }
+    } else {
+      return true;
+    }
+  };
+
+  const createPDF = async () => {
+    if (await isPermitted()) {
+      let options = {
+        //Content to print
+        html:
+          '<h1 style="text-align: center;"><strong>Hello Guys</strong></h1><p style="text-align: center;">Here is an example of pdf Print in React Native</p><p style="text-align: center;"><strong>Team About React</strong></p>',
+        //File Name
+        fileName: 'test',
+        //File directory
+        directory: 'docs',
+      };
+      let file = await RNHTMLtoPDF.convert(options);
+      console.log(file.filePath);
+      setFilePath(file.filePath);
+    }
+  };
 
   const getUserid = async () => {
     const userId = await AsyncStorage.getItem('user_id');
@@ -414,7 +454,13 @@ const IncorNoteScreen = ({navigation}) => {
                 수정
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                {
+                  console.log('click되었음!');
+                  createPDF();
+                }
+              }}>
               <Icon name="download-outline" size={31} />
             </TouchableOpacity>
           </View>
