@@ -24,6 +24,7 @@ import {
   Platform,
   TextInput,
   SafeAreaView,
+  Dimensions,
 } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
@@ -191,8 +192,8 @@ const IncorNoteReadScreen = ({route, navigation}) => {
           style={styles.pb_container}>
           <AutoHeightImage
             source={{uri: item.pb_img}}
-            width={wp(92)}
             style={styles.pb_img}
+            width={wp(90)}
           />
         </ScrollView>
 
@@ -217,8 +218,8 @@ const IncorNoteReadScreen = ({route, navigation}) => {
           style={styles.pb_container}>
           <AutoHeightImage
             source={{uri: item.sol_img}}
-            width={wp(92)}
             style={styles.pb_img}
+            width={wp(90)}
           />
         </ScrollView>
 
@@ -360,11 +361,12 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0,0,0,0.3)',
   },
   pb_img: {
-    paddingTop: hp(1),
+    // paddingTop: hp(1),
     // resizeMode: 'contain',
-    // width: wp(84),
-    // height: '100%',
+    // width: wp(90),
+    // height: wp(200),
     // justifyContent: 'flex-start',
+    // alignContent: 'flex-start',
   },
 
   ans_container: {
