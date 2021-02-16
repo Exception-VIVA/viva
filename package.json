@@ -22,6 +22,7 @@
     "react-native-auto-height-image": "3.2.4",
     "react-native-flash-message": "0.1.22",
     "react-native-gesture-handler": "1.10.0",
+    "react-native-html-to-pdf": "0.9.1",
     "react-native-permissions": "3.0.0",
     "react-native-picker-select": "8.0.4",
     "react-native-raw-bottom-sheet": "2.2.0",
