@@ -27,6 +27,7 @@ import {
 
 import AsyncStorage from '@react-native-community/async-storage';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import {create} from 'react-native/jest/renderer';
 
 const createincorNoteData = [
   {
@@ -77,6 +78,8 @@ const IncorNoteScreen = ({navigation}) => {
   const [noteTitle, setNoteTitle] = useState('');
   const [noteTitlebefore, setNoteTitlebefore] = useState('');
   const [colorURL, setColorURL] = useState('https://i.ibb.co/vsv7pWR/red.png');
+  const [incorPbData, setIncorPbData] = useState([]); //pdf 생성시 필요한 상세 문제
+  const [htmlinput, setHtmlinput] = useState('');
 
   const delNoterefRBSheet = useRef();
   const updateNoterefRBSheet = useRef();
@@ -102,21 +105,74 @@ const IncorNoteScreen = ({navigation}) => {
     }
   };
 
-  const createPDF = async () => {
+  const createPDF = async (source) => {
+    console.log('createPDF 함수까지 옴');
     if (await isPermitted()) {
-      let options = {
-        //Content to print
-        html:
-          '<h1 style="text-align: center;"><strong>Hello Guys</strong></h1><p style="text-align: center;">Here is an example of pdf Print in React Native</p><p style="text-align: center;"><strong>Team About React</strong></p>',
-        //File Name
+      const options = {
+        html: source,
         fileName: 'test',
-        //File directory
-        directory: 'docs',
+        directory: 'Documents',
       };
-      let file = await RNHTMLtoPDF.convert(options);
+      const file = await RNHTMLtoPDF.convert(options);
       console.log(file.filePath);
       setFilePath(file.filePath);
     }
+  };
+
+  const generateHtml = (value) => {
+    //이 전에 fetch를 해야할 듯,, generateHtmlFULL에서 ..!
+    `<div>
+<span>Hi ,${value},제발 되어라.?
+</span>
+</div>`;
+  };
+
+  // const htmlinput = '<div>뭐가 문젠ㄷ...친놈아 왜 안돼..</div>';
+  // const htmlinput = generateHtml('inryu');
+
+  const settingHTML = async () => {
+    const source = `<div>
+<span>Hi , how are you?zztlqkf야...되라고
+</span>
+</div>`;
+    return source;
+  };
+
+  const getIncorPbdata = async (userId, note_sn) => {
+    const response = await fetch(
+      preURL.preURL +
+        '/api/incor-note-content?' +
+        new URLSearchParams({
+          stu_id: userId,
+          note_sn: note_sn,
+        }),
+      {
+        method: 'GET',
+      },
+    );
+    if (response.status === 200) {
+      const responseJson = await response.json();
+      if (responseJson.status === 'success') {
+        // console.log('====fetch return result====');
+        console.log(responseJson.data.pb_info);
+        return responseJson.data.pb_info;
+      } else if (responseJson.status === 'null') {
+        return [];
+      }
+    } else {
+      throw new Error('unable to get your Workbook');
+    }
+  };
+
+  const createPdfFull = async (note_sn) => {
+    setLoading(true);
+    const userId = await getUserid();
+    const incorpbData = await getIncorPbdata(userId, note_sn);
+    setIncorPbData(incorpbData);
+    const source = await settingHTML();
+
+    const what2 = await createPDF(source);
+    setLoading(false);
   };
 
   const getUserid = async () => {
@@ -454,11 +510,13 @@ const IncorNoteScreen = ({navigation}) => {
                 수정
               </Text>
             </TouchableOpacity>
+
+            {/*Pdf export 버튼*/}
             <TouchableOpacity
               onPress={() => {
                 {
                   console.log('click되었음!');
-                  createPDF();
+                  createPdfFull(item.note_sn);
                 }
               }}>
               <Icon name="download-outline" size={31} />
