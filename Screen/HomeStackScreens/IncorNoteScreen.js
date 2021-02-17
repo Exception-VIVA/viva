@@ -119,21 +119,28 @@ const IncorNoteScreen = ({navigation}) => {
     }
   };
 
-  const generateHtml = (value) => {
-    //이 전에 fetch를 해야할 듯,, generateHtmlFULL에서 ..!
-    `<div>
-<span>Hi ,${value},제발 되어라.?
-</span>
-</div>`;
-  };
-
-  // const htmlinput = '<div>뭐가 문젠ㄷ...친놈아 왜 안돼..</div>';
-  // const htmlinput = generateHtml('inryu');
-
-  const settingHTML = async () => {
+  const settingHTML = async (value) => {
     const source = `<div>
-<span>Hi , how are you?zztlqkf야...되라고
-</span>
+   <script language="JavaScript">
+            // document.write(${value.length}); ///6
+            
+            
+            //아니면 여기서 JS로 배열을 다시..? 근데 안 될듯..
+            //여기 오기 pb_img, sol_ans 등 각 배열을 만들어서 인자로 넘기고 여기서 새로운 배열을 생성해서 대입하면 안 ㅗ디나
+            
+            
+            for(var i=0;i<${value.length};i++){
+              document.write(${value[0].sol_ans})
+            }
+            
+    </script>
+    
+    <!--<span>${value[0].sol_ans}</span>
+    <span>${value[1].sol_ans}</span>
+    <span>${value[2].sol_ans}</span>
+    <span>${value[3].sol_ans}</span>
+    <span>${value[4].sol_ans}</span>
+    <span>${value.length}</span>-->
 </div>`;
     return source;
   };
@@ -169,7 +176,7 @@ const IncorNoteScreen = ({navigation}) => {
     const userId = await getUserid();
     const incorpbData = await getIncorPbdata(userId, note_sn);
     setIncorPbData(incorpbData);
-    const source = await settingHTML();
+    const source = await settingHTML(incorpbData);
 
     const what2 = await createPDF(source);
     setLoading(false);
