@@ -119,28 +119,58 @@ const IncorNoteScreen = ({navigation}) => {
     }
   };
 
-  const settingHTML = async (value) => {
+  const settingHTML = async (pb_img_Arr, sol_ans_Arr, sol_img_Arr) => {
     const source = `<div>
-   <script language="JavaScript">
-            // document.write(${value.length}); ///6
-            
-            
-            //아니면 여기서 JS로 배열을 다시..? 근데 안 될듯..
-            //여기 오기 pb_img, sol_ans 등 각 배열을 만들어서 인자로 넘기고 여기서 새로운 배열을 생성해서 대입하면 안 ㅗ디나
-            
-            
-            for(var i=0;i<${value.length};i++){
-              document.write(${value[0].sol_ans})
-            }
-            
+   <script language="JavaScript"  type="text/javascript">
+  
+               
+        //문자열로 가져오기
+        var sol_ans="${sol_ans_Arr}";
+        var pb_img="${pb_img_Arr}"
+        var sol_img="${sol_img_Arr}"
+        
+        //1. sol_ans_arr 하나씩 잘라서 배열에 넣기
+        var sol_ans_arr=sol_ans.split(",");
+        
+        document.write("===sol_ans_arr===<br>");
+
+        for(var i=0;i<sol_ans_arr.length;i++){
+          document.write(sol_ans_arr[i]+"<br>");
+        }
+        
+        //2. pb_img_arr
+        //.png, 기준으로 자른 후 마지막 빼고는 뒤에 .png다 붙여주기
+        var png=".png"
+        var pb_img_arr=pb_img.split(".png,");
+        
+        for(var i=0;i<pb_img_arr.length-1;i++){
+          pb_img_arr[i]=pb_img_arr[i].concat(png);
+        }
+        
+         document.write("===pb_img_arr===<br>");
+
+        for(var i=0;i<pb_img_arr.length;i++){
+          document.write(pb_img_arr[i]+"<br>");
+        }
+        
+        //3.sol_img_arr
+        var sol_img_arr=pb_img.split(".png,");
+
+        for(var i=0;i<sol_img_arr.length-1;i++){
+          sol_img_arr[i]=sol_img_arr[i].concat(png);
+        }
+        
+        document.write("===sol_img_arr===<br>");
+
+        for(var i=0;i<sol_img_arr.length;i++){
+          document.write(sol_img_arr[i]+"<br>");
+        }
+        
+
+       
+
+        
     </script>
-    
-    <!--<span>${value[0].sol_ans}</span>
-    <span>${value[1].sol_ans}</span>
-    <span>${value[2].sol_ans}</span>
-    <span>${value[3].sol_ans}</span>
-    <span>${value[4].sol_ans}</span>
-    <span>${value.length}</span>-->
 </div>`;
     return source;
   };
@@ -176,7 +206,27 @@ const IncorNoteScreen = ({navigation}) => {
     const userId = await getUserid();
     const incorpbData = await getIncorPbdata(userId, note_sn);
     setIncorPbData(incorpbData);
-    const source = await settingHTML(incorpbData);
+
+    //배열 나눠주기?
+    console.log('==배열을 나눠줄 것이다.');
+
+    const pb_img_Arr = new Array();
+    const sol_ans_Arr = new Array();
+    const sol_img_Arr = new Array();
+
+    for (var i = 0; i < incorpbData.length; i++) {
+      pb_img_Arr.push(incorpbData[i].pb_img);
+      sol_ans_Arr.push(incorpbData[i].sol_ans);
+      sol_img_Arr.push(incorpbData[i].sol_img);
+    }
+
+    console.log('나눠준 배열을 출력할 것이다');
+
+    console.log(pb_img_Arr);
+    console.log(sol_ans_Arr);
+    console.log(sol_img_Arr);
+
+    const source = await settingHTML(pb_img_Arr, sol_ans_Arr, sol_img_Arr);
 
     const what2 = await createPDF(source);
     setLoading(false);
