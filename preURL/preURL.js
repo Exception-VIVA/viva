@@ -1,3 +1,3 @@
 module.exports = {
-  preURL: 'http://192.168.0.4:3001',
+  preURL: 'http://172.30.1.40:3001',
 };
