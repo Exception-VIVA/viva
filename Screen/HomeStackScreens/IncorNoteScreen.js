@@ -119,7 +119,12 @@ const IncorNoteScreen = ({navigation}) => {
     }
   };
 
-  const settingHTML = async (pb_img_Arr, sol_ans_Arr, sol_img_Arr) => {
+  const settingHTML = async (
+    pb_img_Arr,
+    sol_ans_Arr,
+    sol_img_Arr,
+    note_name,
+  ) => {
     const source = `<div>
    <script language="JavaScript"  type="text/javascript">
   
@@ -154,7 +159,7 @@ const IncorNoteScreen = ({navigation}) => {
         // }
         
         //3.sol_img_arr
-        var sol_img_arr=pb_img.split(".png,");
+        var sol_img_arr=sol_img.split(".png,");
 
         for(var i=0;i<sol_img_arr.length-1;i++){
           sol_img_arr[i]=sol_img_arr[i].concat(png);
@@ -167,6 +172,7 @@ const IncorNoteScreen = ({navigation}) => {
         // }
         //
         
+         
         
         for(var i=0;i<pb_img_arr.length;i++){
           document.write(\`<div style="padding: 10px; width:50%; border-right: 1px dashed black; ">
@@ -174,8 +180,8 @@ const IncorNoteScreen = ({navigation}) => {
             <span style="font-size: 15px">문제</span>
         </div>
 
-        <div style="padding-bottom: 30px;">
-            <img src="https://i.ibb.co/gb0n1Tn/0101-pg045.png" style="width: 95%;height: auto; border-radius: 5px; border: 0.5px solid black" />
+        <div style="padding-bottom: 30px;">\`+
+           \` <img src="\`+pb_img_arr[i]+\`" style="width: 95%;height: auto; border-radius: 5px; border: 0.5px solid black" />
         </div>
 
 
@@ -184,7 +190,7 @@ const IncorNoteScreen = ({navigation}) => {
         </div>
 
         <div style="width:95%;  border-radius: 5px; border: 0.5px solid black; padding-top: 10px;padding-bottom: 10px;">
-            <span style="font-size: 20px;padding-left: 10px">2</span>
+            <span style="font-size: 20px;padding-left: 10px">\`+sol_ans_arr[i]+\`</span>
         </div>
 
         <div style="padding-top: 30px; ">
@@ -192,7 +198,7 @@ const IncorNoteScreen = ({navigation}) => {
         </div>
 
         <div style="padding-bottom: 30px; border-bottom:1px dashed black;">
-            <img src="https://i.ibb.co/xXbLS1C/101-pg022.png" style="width: 95%;height: auto; border-radius: 5px; border: 0.5px solid black" />
+            <img src="\`+sol_img_arr[i]+\`" style="width: 95%;height: auto; border-radius: 5px; border: 0.5px solid black" />
         </div>
 
     </div>\` )
@@ -233,7 +239,7 @@ const IncorNoteScreen = ({navigation}) => {
     }
   };
 
-  const createPdfFull = async (note_sn) => {
+  const createPdfFull = async (note_sn, note_name) => {
     setLoading(true);
     const userId = await getUserid();
     const incorpbData = await getIncorPbdata(userId, note_sn);
@@ -258,7 +264,12 @@ const IncorNoteScreen = ({navigation}) => {
     console.log(sol_ans_Arr);
     console.log(sol_img_Arr);
 
-    const source = await settingHTML(pb_img_Arr, sol_ans_Arr, sol_img_Arr);
+    const source = await settingHTML(
+      pb_img_Arr,
+      sol_ans_Arr,
+      sol_img_Arr,
+      note_name,
+    );
 
     const what2 = await createPDF(source);
     setLoading(false);
@@ -605,7 +616,7 @@ const IncorNoteScreen = ({navigation}) => {
               onPress={() => {
                 {
                   console.log('click되었음!');
-                  createPdfFull(item.note_sn);
+                  createPdfFull(item.note_sn, item.note_name);
                 }
               }}>
               <Icon name="download-outline" size={31} />
