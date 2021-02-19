@@ -172,12 +172,16 @@ const IncorNoteScreen = ({navigation}) => {
         // }
         //
         
+        document.write(\`
+        <div style="width:100%; height: 55px; display:flex; align-items: center; justify-content: center" >
+        <span style="font-size: 20px">🔍 \`+"${note_name}"+\`</span>
+        </div>\`);
          
         
         for(var i=0;i<pb_img_arr.length;i++){
           document.write(\`<div style="padding: 10px; width:50%; border-right: 1px dashed black; ">
         <div style="padding-bottom: 10px">
-            <span style="font-size: 15px">문제</span>
+            <span style="font-size: 15px">문제 \`+(i+1)+\`</span>
         </div>
 
         <div style="padding-bottom: 30px;">\`+
@@ -193,7 +197,7 @@ const IncorNoteScreen = ({navigation}) => {
             <span style="font-size: 20px;padding-left: 10px">\`+sol_ans_arr[i]+\`</span>
         </div>
 
-        <div style="padding-top: 30px; ">
+        <div style="padding-top: 30px; padding-bottom: 10px;">
             <span style="font-size: 15px">해설</span>
         </div>
 
