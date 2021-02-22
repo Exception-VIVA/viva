@@ -10,6 +10,7 @@ import Loader from '../Components/Loader';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {showMessage, hideMessage} from 'react-native-flash-message';
+import Share from 'react-native-share';
 
 import {
   StyleSheet,
@@ -80,6 +81,8 @@ const IncorNoteScreen = ({navigation}) => {
   const [colorURL, setColorURL] = useState('https://i.ibb.co/vsv7pWR/red.png');
   const [incorPbData, setIncorPbData] = useState([]); //pdf 생성시 필요한 상세 문제
   const [htmlinput, setHtmlinput] = useState('');
+  const [result, setResult] = useState('');
+  const [fileURL, setFileURL] = useState('');
 
   const delNoterefRBSheet = useRef();
   const updateNoterefRBSheet = useRef();
@@ -105,6 +108,25 @@ const IncorNoteScreen = ({navigation}) => {
     }
   };
 
+  const shareToFiles = async (URL) => {
+    const pre = 'data:application/pdf;base64,';
+    console.log(pre + URL);
+    const shareOptions = {
+      title: 'Share file',
+      url: pre + URL, // base64 with mimeType or path to local file
+    };
+
+    // If you want, you can use a try catch, to parse
+    // the share response. If the user cancels, etc.
+    try {
+      const ShareResponse = await Share.open(shareOptions);
+      setResult(JSON.stringify(ShareResponse, null, 2));
+    } catch (error) {
+      console.log('Error =>', error);
+      // setResult('error: '.concat(getErrorString(error)));
+    }
+  };
+
   const createPDF = async (source) => {
     console.log('createPDF 함수까지 옴');
     if (await isPermitted()) {
@@ -112,10 +134,15 @@ const IncorNoteScreen = ({navigation}) => {
         html: source,
         fileName: 'test',
         directory: 'Documents',
+        base64: true,
       };
       const file = await RNHTMLtoPDF.convert(options);
       console.log(file.filePath);
+      console.log(file.base64);
       setFilePath(file.filePath);
+      setFileURL(file.base64);
+
+      return file.base64;
     }
   };
 
@@ -249,9 +276,7 @@ const IncorNoteScreen = ({navigation}) => {
     const incorpbData = await getIncorPbdata(userId, note_sn);
     setIncorPbData(incorpbData);
 
-    //배열 나눠주기?
-    console.log('==배열을 나눠줄 것이다.');
-
+    //배열 나눠주기
     const pb_img_Arr = new Array();
     const sol_ans_Arr = new Array();
     const sol_img_Arr = new Array();
@@ -262,12 +287,6 @@ const IncorNoteScreen = ({navigation}) => {
       sol_img_Arr.push(incorpbData[i].sol_img);
     }
 
-    console.log('나눠준 배열을 출력할 것이다');
-
-    console.log(pb_img_Arr);
-    console.log(sol_ans_Arr);
-    console.log(sol_img_Arr);
-
     const source = await settingHTML(
       pb_img_Arr,
       sol_ans_Arr,
@@ -275,8 +294,16 @@ const IncorNoteScreen = ({navigation}) => {
       note_name,
     );
 
-    const what2 = await createPDF(source);
+    const URL = await createPDF(source);
+    const what = await shareToFiles(URL);
     setLoading(false);
+
+    showMessage({
+      message: '오답노트 내보내기가 완료되었습니다.',
+      type: 'default',
+      duration: 2500,
+      // autoHide: false,
+    });
   };
 
   const getUserid = async () => {
