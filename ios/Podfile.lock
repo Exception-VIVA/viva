@@ -318,10 +318,14 @@ PODS:
     - React-Core
   - RNReanimated (1.13.2):
     - React-Core
+  - RNRectangleScanner (1.0.10):
+    - React
   - RNScreens (2.17.1):
     - React-Core
   - RNShare (5.1.1):
     - React-Core
+  - RNSVG (12.1.0):
+    - React
   - RNVectorIcons (8.0.0):
     - React-Core
   - Yoga (1.14.0)
@@ -386,8 +390,10 @@ DEPENDENCIES:
   - "RNPdfScanner (from `../node_modules/@woonivers/react-native-document-scanner/ios`)"
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
+  - RNRectangleScanner (from `../node_modules/react-native-rectangle-scanner/ios`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNShare (from `../node_modules/react-native-share`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -479,10 +485,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-permissions"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
+  RNRectangleScanner:
+    :path: "../node_modules/react-native-rectangle-scanner/ios"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNShare:
     :path: "../node_modules/react-native-share"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   Yoga:
@@ -536,8 +546,10 @@ SPEC CHECKSUMS:
   RNPdfScanner: bd89efba74959f3e4f863cc406fa962ea3a3af2f
   RNPermissions: 99dd8d4a30ff13509b949ca63cd1f69edc461775
   RNReanimated: e03f7425cb7a38dcf1b644d680d1bfc91c3337ad
+  RNRectangleScanner: 0bb9b67ed46f3558c8f956968b6c637946c3e78a
   RNScreens: b6c9607e6fe47c1b6e2f1910d2acd46dd7ecea3a
   RNShare: 6779fdd48e6246a8c79276a5b5e74a0f0d61a1ec
+  RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNVectorIcons: f67a1abce2ec73e62fe4606e8110e95a832bc859
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a

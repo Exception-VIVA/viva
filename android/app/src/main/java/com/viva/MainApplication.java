@@ -19,10 +19,6 @@ import com.christopherdro.htmltopdf.RNHTMLtoPDFPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
-//    new MainReactPackage()
-//    new RNHTMLtoPDFPackage()
-
-
     private final ReactNativeHost mReactNativeHost =
       new ReactNativeHost(this) {
         @Override

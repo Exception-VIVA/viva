@@ -179,11 +179,11 @@ const IncorNoteScreen = ({navigation}) => {
           pb_img_arr[i]=pb_img_arr[i].concat(png);
         }
         
-         // document.write("===pb_img_arr===<br>");
+         document.write("===pb_img_arr===<br>");
 
-        // for(var i=0;i<pb_img_arr.length;i++){
-        //   document.write(pb_img_arr[i]+"<br>");
-        // }
+        for(var i=0;i<pb_img_arr.length;i++){
+          document.write(pb_img_arr[i]+"<br>");
+        }
         
         //3.sol_img_arr
         var sol_img_arr=sol_img.split(".png,");
@@ -237,10 +237,10 @@ const IncorNoteScreen = ({navigation}) => {
         }
 
 
-
-
     </script>
 </div>`;
+
+    console.log(source);
     return source;
   };
 
@@ -297,13 +297,6 @@ const IncorNoteScreen = ({navigation}) => {
     const URL = await createPDF(source);
     const what = await shareToFiles(URL);
     setLoading(false);
-
-    showMessage({
-      message: '오답노트 내보내기가 완료되었습니다.',
-      type: 'default',
-      duration: 2500,
-      // autoHide: false,
-    });
   };
 
   const getUserid = async () => {

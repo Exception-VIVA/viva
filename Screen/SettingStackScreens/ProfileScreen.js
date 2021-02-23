@@ -1,4 +1,4 @@
-import React, {useState, createRef} from 'react';
+import React, {Component, seState, createRef, useRef} from 'react';
 
 import {
   widthPercentageToDP as wp,
@@ -10,14 +10,48 @@ import Loader from '../Components/Loader';
 import {StyleSheet, View, Text} from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
+import Scanner from 'react-native-rectangle-scanner';
 
-const ProfileScreen = ({navigation}) => {
-  return (
-    <View style={styles.container}>
-      <Text>this is ProfileScreen</Text>
-    </View>
-  );
-};
+// const ProfileScreen = ({navigation}) => {
+//   const camera = useRef();
+//
+//   const handleOnPictureProcessed = ({croppedImage, initialImage}) => {
+//     this.props.doSomethingWithCroppedImagePath(croppedImage);
+//     this.props.doSomethingWithOriginalImagePath(initialImage);
+//   };
+//
+//   return (
+//     <View style={styles.container}>
+//       <Text>this is ProfileScreen</Text>
+//       <Scanner
+//         onPictureProcessed={handleOnPictureProcessed}
+//         ref={camera}
+//         style={{flex: 1}}
+//       />
+//     </View>
+//   );
+// };
+
+class ProfileScreen extends Component {
+  handleOnPictureProcessed = ({croppedImage, initialImage}) => {
+    this.props.doSomethingWithCroppedImagePath(croppedImage);
+    this.props.doSomethingWithOriginalImagePath(initialImage);
+  };
+
+  onCapture = () => {
+    this.camera.current.capture();
+  };
+
+  render() {
+    return (
+      <Scanner
+        onPictureProcessed={this.handleOnPictureProcessed}
+        ref={this.camera}
+        style={{flex: 1}}
+      />
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -26,29 +60,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingLeft: wp(7),
     paddingRight: wp(7),
-  },
-  topArea: {
-    flex: 1,
-    paddingTop: wp(2),
-  },
-  titleArea: {
-    flex: 0.7,
-    justifyContent: 'center',
-    paddingTop: wp(3),
-  },
-  TextArea: {
-    flex: 0.3,
-    justifyContent: 'center',
-    backgroundColor: 'white',
-  },
-  Text: {
-    fontSize: wp('4%'),
-    paddingBottom: wp('1%'),
-  },
-  TextValidation: {
-    fontSize: wp('4%'),
-    color: 'red',
-    paddingTop: wp(2),
   },
 });
 
