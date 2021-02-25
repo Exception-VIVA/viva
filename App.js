@@ -59,15 +59,29 @@ const Tab = createBottomTabNavigator();
 // }
 
 const HomeStackScreen = ({navigation, route}) => {
-  const routeName = getFocusedRouteNameFromRoute(route);
+  // React.useLayoutEffect(() => {
+  //   const routeName = getFocusedRouteNameFromRoute(route);
+  //
+  //   if (routeName === 'Home') {
+  //     navigation.setOptions({tabBarVisible: true});
+  //   } else {
+  //     navigation.setOptions({tabBarVisible: false});
+  //   }
+  // }, [navigation, route]);
 
-  useLayoutEffect(() => {
-    if (routeName === 'Home') {
-      navigation.setOptions({tabBarVisible: true});
-    } else {
-      navigation.setOptions({tabBarVisible: false});
+  HomeStackScreen.navigationOptions = ({navigation}) => {
+    let tabBarVisible = true;
+
+    let routeName = navigation.state.routes[navigation.state.index].routeName;
+
+    if (routeName !== 'Home') {
+      tabBarVisible = false;
     }
-  }, [navigation, route]);
+
+    return {
+      tabBarVisible,
+    };
+  };
 
   return (
     <Stack.Navigator>
@@ -81,7 +95,6 @@ const HomeStackScreen = ({navigation, route}) => {
               source={require('./src/viva-header-logo.png')}
             />
           ),
-          tabBarVisible: false,
         })}
         component={HomeScreen}
       />
@@ -104,7 +117,13 @@ const HomeStackScreen = ({navigation, route}) => {
 const SettingStackScreen = () => {
   return (
     <Stack.Navigator>
-      <SettingStack.Screen name="Profile" component={ProfileScreen} />
+      <SettingStack.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={({navigation, route}) => ({
+          headerTransparent: true,
+        })}
+      />
       <SettingStack.Screen name="ProfileEdit" component={ProfileEditScreen} />
     </Stack.Navigator>
   );
