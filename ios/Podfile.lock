@@ -312,8 +312,6 @@ PODS:
     - React-Core
   - RNGestureHandler (1.10.0):
     - React-Core
-  - RNPdfScanner (2.1.1):
-    - React
   - RNPermissions (3.0.0):
     - React-Core
   - RNReanimated (1.13.2):
@@ -387,7 +385,6 @@ DEPENDENCIES:
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
-  - "RNPdfScanner (from `../node_modules/@woonivers/react-native-document-scanner/ios`)"
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNRectangleScanner (from `../node_modules/react-native-rectangle-scanner/ios`)
@@ -479,8 +476,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-picker/picker"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
-  RNPdfScanner:
-    :path: "../node_modules/@woonivers/react-native-document-scanner/ios"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNReanimated:
@@ -543,7 +538,6 @@ SPEC CHECKSUMS:
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
   RNCPicker: 77183d9b1cd80ae55505322f8ad09ba0036e29ba
   RNGestureHandler: 03f587ba19a7e2d9fe48fb9aa6e33ace5fd07dd5
-  RNPdfScanner: bd89efba74959f3e4f863cc406fa962ea3a3af2f
   RNPermissions: 99dd8d4a30ff13509b949ca63cd1f69edc461775
   RNReanimated: e03f7425cb7a38dcf1b644d680d1bfc91c3337ad
   RNRectangleScanner: 0bb9b67ed46f3558c8f956968b6c637946c3e78a
