@@ -29,37 +29,37 @@ const createincorNoteData = [
   {
     id: '1',
     color: 'red',
-    img: 'https://i.ibb.co/vsv7pWR/red.png',
+    img: 'https://i.postimg.cc/nhhVVbqN/red.png',
   },
   {
     id: '2',
     color: 'yellow',
 
-    img: 'https://i.ibb.co/qY0Rkky/yello.png',
+    img: 'https://i.postimg.cc/JzYrG6q0/yello.png',
   },
   {
     id: '3',
     color: 'green',
 
-    img: 'https://i.ibb.co/3mBKH0J/green.png',
+    img: 'https://i.postimg.cc/9FVFSq0m/green.png',
   },
   {
     id: '4',
     color: 'blue',
 
-    img: 'https://i.ibb.co/SfLkVp4/blue.png',
+    img: 'https://i.postimg.cc/mZ7g8Sbp/blue.png',
   },
   {
     id: '5',
     color: 'indigo',
 
-    img: 'https://i.ibb.co/Nnyn1W6/indigo.png',
+    img: 'https://i.postimg.cc/7LCx73sV/indigo.png',
   },
   {
     id: '6',
     color: 'purple',
 
-    img: 'https://i.ibb.co/wrxmZSL/purple.png',
+    img: 'https://i.postimg.cc/m2w2G21Q/purple.png',
   },
 ];
 
