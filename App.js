@@ -1,20 +1,17 @@
-import React, {useState, useEffect, useLayoutEffect} from 'react';
+import React, {useLayoutEffect} from 'react';
 import FlashMessage from 'react-native-flash-message';
 
+import {Image, StyleSheet} from 'react-native';
 import {
-  SafeAreaView,
-  StyleSheet,
-  Image,
-  Button,
-  TouchableOpacity,
-} from 'react-native';
-import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
 
 import Icon from 'react-native-vector-icons/dist/Ionicons';
-import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+import {
+  getFocusedRouteNameFromRoute,
+  NavigationContainer,
+} from '@react-navigation/native';
 
 import SplashScreen from './Screen/SplashScreen';
 import LoginScreen from './Screen/LoginScreen';
@@ -38,7 +35,6 @@ import ProfileEditScreen from './Screen/SettingStackScreens/ProfileEditScreen';
 import BackBtn from './Screen/Components/BackBtn';
 
 import 'react-native-gesture-handler';
-import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
@@ -59,29 +55,22 @@ const Tab = createBottomTabNavigator();
 // }
 
 const HomeStackScreen = ({navigation, route}) => {
-  // React.useLayoutEffect(() => {
-  //   const routeName = getFocusedRouteNameFromRoute(route);
-  //
-  //   if (routeName === 'Home') {
-  //     navigation.setOptions({tabBarVisible: true});
-  //   } else {
-  //     navigation.setOptions({tabBarVisible: false});
-  //   }
-  // }, [navigation, route]);
+  const getrouteName = async () => {
+    const routeName = await getFocusedRouteNameFromRoute(route);
+    // console.log('==routeName==');
+    // console.log(routeName);
 
-  HomeStackScreen.navigationOptions = ({navigation}) => {
-    let tabBarVisible = true;
-
-    let routeName = navigation.state.routes[navigation.state.index].routeName;
-
-    if (routeName !== 'Home') {
-      tabBarVisible = false;
+    if (routeName === 'Home' || routeName === undefined) {
+      navigation.setOptions({tabBarVisible: true});
+    } else {
+      navigation.setOptions({tabBarVisible: false});
     }
-
-    return {
-      tabBarVisible,
-    };
+    return routeName;
   };
+
+  useLayoutEffect(() => {
+    const routeName = getrouteName();
+  }, [navigation, route]);
 
   return (
     <Stack.Navigator>
@@ -95,6 +84,7 @@ const HomeStackScreen = ({navigation, route}) => {
               source={require('./src/viva-header-logo.png')}
             />
           ),
+          tabBarVisible: true,
         })}
         component={HomeScreen}
       />
@@ -104,7 +94,14 @@ const HomeStackScreen = ({navigation, route}) => {
       <HomeStack.Screen name="AcademyBook" component={AcademyBookScreen} />
       <HomeStack.Screen name="IncorNote" component={IncorNoteScreen} />
       <HomeStack.Screen name="IncorNoteRead" component={IncorNoteReadScreen} />
-      <HomeStack.Screen name="Mark" component={MarkScreen} />
+      <HomeStack.Screen
+        name="Mark"
+        component={MarkScreen}
+        options={({navigation, route}) => ({
+          headerTransparent: true,
+          headerTitle: '',
+        })}
+      />
       <HomeStack.Screen name="MarkResult" component={MarkResultScreen} />
       <HomeStack.Screen
         name="MarkResultSave"
@@ -121,7 +118,7 @@ const SettingStackScreen = () => {
         name="Profile"
         component={ProfileScreen}
         options={({navigation, route}) => ({
-          headerTransparent: true,
+          // headerTransparent: true,
         })}
       />
       <SettingStack.Screen name="ProfileEdit" component={ProfileEditScreen} />
