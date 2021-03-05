@@ -7,7 +7,7 @@ import {
 
 import 'react-native-gesture-handler';
 import Loader from '../Components/Loader';
-import {StyleSheet, View, Text} from 'react-native';
+import {StyleSheet, View, Text, Image} from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -15,6 +15,13 @@ const ProfileScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Text>this is ProfileScreen</Text>
+      <Image
+        source={{
+          uri:
+            '/var/mobile/Containers/Data/Application/C2EFE133-6E0D-4E10-9B63-09D6A073B6FB/Library/Caches/RNRectangleScanner/O1614959311.jpeg',
+        }}
+        style={{width: wp(80), height: hp(80)}}
+      />
     </View>
   );
 };

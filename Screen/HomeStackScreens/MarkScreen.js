@@ -11,13 +11,19 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Scanner, {
   Filters,
   RectangleOverlay,
 } from 'react-native-rectangle-scanner';
-import {Image} from 'react-native-svg';
+// import {Image} from 'react-native-svg';
+import RNFS from 'react-native-fs';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 
 export default class ProfileScreen extends PureComponent {
   static propTypes = {
@@ -389,11 +395,17 @@ export default class ProfileScreen extends PureComponent {
     if (this.state.feedbackState) {
       return (
         <>
-          <SafeAreaView style={[styles.overlay, {backgroundColor: 'white'}]}>
+          <View style={[styles.overlay, {backgroundColor: 'white'}]}>
+            <Text>하lddl</Text>
+
             <Image
-              source={require('/var/mobile/Containers/Data/Application/C8DB689A-DC54-49FF-88A1-8B8F348E7733/Library/Caches/RNRectangleScanner/O1614957823.jpeg')}
+              source={{
+                uri:
+                  '/var/mobile/Containers/Data/Application/C2EFE133-6E0D-4E10-9B63-09D6A073B6FB/Library/Caches/RNRectangleScanner/O1614959311.jpeg',
+              }}
+              style={{width: wp(80), height: hp(80)}}
             />
-          </SafeAreaView>
+          </View>
         </>
       );
     }
