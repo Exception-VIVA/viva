@@ -57,8 +57,6 @@ const Tab = createBottomTabNavigator();
 const HomeStackScreen = ({navigation, route}) => {
   const getrouteName = async () => {
     const routeName = await getFocusedRouteNameFromRoute(route);
-    // console.log('==routeName==');
-    // console.log(routeName);
 
     if (routeName === 'Home' || routeName === undefined) {
       navigation.setOptions({tabBarVisible: true});

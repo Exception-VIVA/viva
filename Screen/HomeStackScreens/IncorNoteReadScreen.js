@@ -66,7 +66,7 @@ const IncorNoteReadScreen = ({route, navigation}) => {
       const responseJson = await response.json();
       if (responseJson.status === 'success') {
         // console.log('====fetch return result====');
-        console.log(responseJson.data.pb_info);
+        // console.log(responseJson.data.pb_info);
         return responseJson.data.pb_info;
       } else if (responseJson.status === 'null') {
         return [];
@@ -105,7 +105,7 @@ const IncorNoteReadScreen = ({route, navigation}) => {
       .then((responseJson) => {
         //Hide Loader
         // setLoading(false);
-        console.log(responseJson);
+        // console.log(responseJson);
         // If server response message same as Data Matched
         if (responseJson.status === 'success') {
           console.log('deleting pb is Successful.');

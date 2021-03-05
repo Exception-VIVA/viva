@@ -17,6 +17,7 @@ import Scanner, {
   Filters,
   RectangleOverlay,
 } from 'react-native-rectangle-scanner';
+import {Image} from 'react-native-svg';
 
 export default class ProfileScreen extends PureComponent {
   static propTypes = {
@@ -55,6 +56,7 @@ export default class ProfileScreen extends PureComponent {
       loadingCamera: true,
       processingImage: false,
       takingPicture: false,
+      feedbackState: false,
       overlayFlashOpacity: new Animated.Value(0),
       device: {
         initialized: false,
@@ -153,12 +155,6 @@ export default class ProfileScreen extends PureComponent {
     });
   };
 
-  // Set the camera view filter
-  onFilterIdChange = (id) => {
-    this.setState({filterId: id});
-    this.props.onFilterIdChange(id);
-  };
-
   // Determine why the camera is disabled.
   getCameraDisabledMessage() {
     if (this.state.isMultiTasking) {
@@ -240,6 +236,7 @@ export default class ProfileScreen extends PureComponent {
       takingPicture: false,
       processingImage: false,
       showScannerView: this.props.cameraIsOn || false,
+      feedbackState: true,
     });
 
     console.log('===initialImage===');
@@ -299,31 +296,6 @@ export default class ProfileScreen extends PureComponent {
     }
   }
 
-  // Renders the flashlight button. Only shown if the device has a flashlight.
-  renderFlashControl() {
-    const {flashEnabled, device} = this.state;
-    if (!device.flashIsAvailable) {
-      return null;
-    }
-    return (
-      <TouchableOpacity
-        style={[
-          styles.flashControl,
-          {backgroundColor: flashEnabled ? '#FFFFFF80' : '#00000080'},
-        ]}
-        activeOpacity={0.8}
-        onPress={() => this.setState({flashEnabled: !flashEnabled})}>
-        <Icon
-          name="ios-flashlight"
-          style={[
-            styles.buttonIcon,
-            {fontSize: 28, color: flashEnabled ? '#333' : '#FFF'},
-          ]}
-        />
-      </TouchableOpacity>
-    );
-  }
-
   // Renders the camera controls. This will show controls on the side for large tablet screens
   // or on the bottom for phones. (For small tablets it will adjust the view a little bit).
   renderCameraControls() {
@@ -337,16 +309,6 @@ export default class ProfileScreen extends PureComponent {
       if (dimensions.height < 500) {
         return (
           <View style={styles.buttonContainer}>
-            <View
-              style={[
-                styles.buttonActionGroup,
-                {
-                  flexDirection: 'row',
-                  alignItems: 'flex-end',
-                  marginBottom: 28,
-                },
-              ]}
-            />
             <View style={[styles.cameraOutline, disabledStyle]}>
               <TouchableOpacity
                 activeOpacity={0.8}
@@ -423,6 +385,20 @@ export default class ProfileScreen extends PureComponent {
     );
   }
 
+  feedbackOverlay() {
+    if (this.state.feedbackState) {
+      return (
+        <>
+          <SafeAreaView style={[styles.overlay, {backgroundColor: 'white'}]}>
+            <Image
+              source={require('/var/mobile/Containers/Data/Application/C8DB689A-DC54-49FF-88A1-8B8F348E7733/Library/Caches/RNRectangleScanner/O1614957823.jpeg')}
+            />
+          </SafeAreaView>
+        </>
+      );
+    }
+  }
+
   // Renders either the camera view, a loading state, or an error message
   // letting the user know why camera use is not allowed
   renderCameraView() {
@@ -476,6 +452,7 @@ export default class ProfileScreen extends PureComponent {
             }}
           />
           {this.renderCameraOverlay()}
+          {this.feedbackOverlay()}
         </View>
       );
     }
@@ -541,10 +518,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   buttonBottomContainer: {
-    alignItems: 'flex-end',
+    alignItems: 'center',
     bottom: 40,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     left: 25,
     position: 'absolute',
     right: 25,
