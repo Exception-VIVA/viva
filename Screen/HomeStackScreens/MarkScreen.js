@@ -24,8 +24,10 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import AutoHeightImage from 'react-native-auto-height-image';
+import {ScrollView} from 'react-native-gesture-handler';
 
-export default class ProfileScreen extends PureComponent {
+export default class MarkScreen extends PureComponent {
   static propTypes = {
     cameraIsOn: PropTypes.bool,
     onLayout: PropTypes.func,
@@ -73,6 +75,8 @@ export default class ProfileScreen extends PureComponent {
         previewWidthPercent: 1,
       },
       book_sn: this.props.route.params.currentBooksn,
+      currentImage: '',
+      preparedImgages: [],
     };
 
     this.camera = React.createRef();
@@ -243,6 +247,7 @@ export default class ProfileScreen extends PureComponent {
       processingImage: false,
       showScannerView: this.props.cameraIsOn || false,
       feedbackState: true,
+      currentImage: croppedImage,
     });
 
     console.log('===initialImage===');
@@ -395,17 +400,73 @@ export default class ProfileScreen extends PureComponent {
     if (this.state.feedbackState) {
       return (
         <>
-          <View style={[styles.overlay, {backgroundColor: 'white'}]}>
-            <Text>하lddl</Text>
+          <SafeAreaView style={[styles.overlay, {backgroundColor: 'white'}]}>
+            <View
+              style={{
+                height: hp(13),
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                paddingBottom: hp(3),
+              }}>
+              <Text style={{fontSize: wp(5), fontWeight: 'bold'}}>
+                📄 스캔 결과
+              </Text>
+            </View>
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <ScrollView
+                style={{
+                  height: hp(60),
+                  // justifyContent: 'center',
+                  // alignItems: 'center',
+                }}>
+                <AutoHeightImage
+                  source={{
+                    uri: this.state.currentImage,
+                  }}
+                  style={styles.feedbackImg}
+                  width={wp(90)}
+                />
+              </ScrollView>
+            </View>
 
-            <Image
-              source={{
-                uri:
-                  '/var/mobile/Containers/Data/Application/C2EFE133-6E0D-4E10-9B63-09D6A073B6FB/Library/Caches/RNRectangleScanner/O1614959311.jpeg',
-              }}
-              style={{width: wp(80), height: hp(80)}}
-            />
-          </View>
+            {/*버튼*/}
+            <View
+              style={{
+                height: hp(15),
+                paddingTop: hp(7),
+              }}>
+              <View style={styles.btnContainer}>
+                <View style={styles.btnArea_l}>
+                  <TouchableOpacity
+                    style={styles.delbtnoutline}
+                    onPress={() => {
+                      {
+                        // delNoterefRBSheet.current.close();
+                      }
+                    }}>
+                    <Text>다시찍기</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.btnArea_r}>
+                  <TouchableOpacity
+                    style={styles.delbtn}
+                    onPress={() => {
+                      {
+                        // delBookFull(currentNotesn);
+                        // delNoterefRBSheet.current.close();
+                      }
+                    }}>
+                    <Text style={{color: 'white'}}>사용하기</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </SafeAreaView>
         </>
       );
     }
@@ -636,5 +697,54 @@ const styles = StyleSheet.create({
   },
   scanner: {
     flex: 1,
+  },
+
+  btnContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: hp(1.5),
+
+    ...Platform.select({
+      ios: {
+        paddingBottom: hp(4.5),
+      },
+    }),
+  },
+  btnArea_l: {
+    // backgroundColor: 'orange',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  btnArea_r: {
+    // backgroundColor: 'blue',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    // marginRight: wp(10),
+  },
+
+  delbtnoutline: {
+    margin: wp(6),
+    marginRight: wp(2),
+    width: wp(42),
+    height: hp(5),
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderWidth: 1,
+  },
+  delbtn: {
+    margin: wp(6),
+    marginLeft: wp(2),
+    width: wp(42),
+    height: hp(5),
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    borderWidth: 1,
   },
 });
