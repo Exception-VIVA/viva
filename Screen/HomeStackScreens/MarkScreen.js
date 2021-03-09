@@ -396,6 +396,25 @@ export default class MarkScreen extends PureComponent {
     );
   }
 
+  feedback = (option) => {
+    if (option == 1) {
+      //다시 찍기
+      this.setState({
+        feedbackState: false,
+      });
+    } else {
+      this.setState({
+        feedbackState: false,
+        preparedImgages: [
+          ...this.state.preparedImgages,
+          this.state.currentImage,
+        ],
+      });
+      console.log('====this.state.preparedImgages===');
+      console.log(this.state.preparedImgages);
+    }
+  };
+
   feedbackOverlay() {
     if (this.state.feedbackState) {
       return (
@@ -403,7 +422,7 @@ export default class MarkScreen extends PureComponent {
           <SafeAreaView style={[styles.overlay, {backgroundColor: 'white'}]}>
             <View
               style={{
-                height: hp(13),
+                height: hp(10),
                 justifyContent: 'flex-end',
                 alignItems: 'center',
                 paddingBottom: hp(3),
@@ -419,7 +438,7 @@ export default class MarkScreen extends PureComponent {
               }}>
               <ScrollView
                 style={{
-                  height: hp(60),
+                  height: hp(65),
                   // justifyContent: 'center',
                   // alignItems: 'center',
                 }}>
@@ -445,7 +464,7 @@ export default class MarkScreen extends PureComponent {
                     style={styles.delbtnoutline}
                     onPress={() => {
                       {
-                        // delNoterefRBSheet.current.close();
+                        this.feedback(1);
                       }
                     }}>
                     <Text>다시찍기</Text>
@@ -457,8 +476,7 @@ export default class MarkScreen extends PureComponent {
                     style={styles.delbtn}
                     onPress={() => {
                       {
-                        // delBookFull(currentNotesn);
-                        // delNoterefRBSheet.current.close();
+                        this.feedback(2);
                       }
                     }}>
                     <Text style={{color: 'white'}}>사용하기</Text>
