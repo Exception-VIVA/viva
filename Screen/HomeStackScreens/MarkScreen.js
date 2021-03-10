@@ -77,6 +77,7 @@ export default class MarkScreen extends PureComponent {
       book_sn: this.props.route.params.currentBooksn,
       currentImage: '',
       preparedImgages: [],
+      isScanned: false,
     };
 
     this.camera = React.createRef();
@@ -134,6 +135,7 @@ export default class MarkScreen extends PureComponent {
         return this.turnOnCamera();
       }
     }
+
     return null;
   }
 
@@ -346,14 +348,34 @@ export default class MarkScreen extends PureComponent {
     return (
       <>
         <View style={styles.buttonBottomContainer}>
-          <View style={[styles.cameraOutline, disabledStyle]}>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.cameraButton}
-              onPress={this.capture}
-            />
+          <View style={{flex: 1, backgroundColor: 'green'}} />
+
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <View style={[styles.cameraOutline, disabledStyle]}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.cameraButton}
+                onPress={this.capture}
+              />
+            </View>
           </View>
-          <View />
+
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'flex-end'}}>
+            {this.state.isScanned && (
+              <TouchableOpacity
+                style={styles.completebtn}
+                onPress={() => {
+                  {
+                    this.props.navigation.replace('Home');
+                    //🧤수정 필요
+                  }
+                }}>
+                <Text style={{color: 'black', fontSize: wp(4.5)}}>완료</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       </>
     );
@@ -403,15 +425,20 @@ export default class MarkScreen extends PureComponent {
         feedbackState: false,
       });
     } else {
+      //사용하ㄱㅣ
       this.setState({
         feedbackState: false,
         preparedImgages: [
           ...this.state.preparedImgages,
           this.state.currentImage,
         ],
+        isScanned: true,
       });
-      console.log('====this.state.preparedImgages===');
-      console.log(this.state.preparedImgages);
+
+      // console.log('====this.state.preparedImgages===');
+      // console.log(this.state.preparedImgages);
+      // console.log('====this.state.isScanned===');
+      // console.log(this.state.isScanned);
     }
   };
 
@@ -616,6 +643,7 @@ const styles = StyleSheet.create({
     left: 25,
     position: 'absolute',
     right: 25,
+    // backgroundColor: 'yellow',
   },
   buttonContainer: {
     alignItems: 'flex-end',
@@ -764,5 +792,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'black',
     borderWidth: 1,
+  },
+
+  completebtn: {
+    margin: wp(5),
+    width: wp(15),
+    height: hp(3.5),
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
   },
 });
