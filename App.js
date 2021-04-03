@@ -115,9 +115,9 @@ const SettingStackScreen = () => {
       <SettingStack.Screen
         name="Profile"
         component={ProfileScreen}
-        options={({navigation, route}) => ({
-          // headerTransparent: true,
-        })}
+        options={{
+          headerBackTitleVisible: false,
+        }}
       />
       <SettingStack.Screen name="ProfileEdit" component={ProfileEditScreen} />
     </Stack.Navigator>
