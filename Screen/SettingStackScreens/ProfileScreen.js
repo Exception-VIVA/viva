@@ -76,9 +76,7 @@ const ProfileScreen = ({navigation}) => {
         <TouchableOpacity
           // style={{paddingRight: 20}}
           onPress={() => {
-            {
-              navigation.navigate('ProfileEdit');
-            }
+            navigation.navigate('ProfileEdit');
           }}>
           <Text style={styles.editbtn}>수정하기</Text>
         </TouchableOpacity>
@@ -109,19 +107,22 @@ const ProfileScreen = ({navigation}) => {
         />
 
         <Text style={styles.formInfoTxt}>학년</Text>
-        <TextInput
-          editable={false}
-          style={styles.textForm}
-          placeholder={userData.stu_grade.toString() + '학년'}
-          placeholderTextColor="black"
-          // onChangeText={(userId) => setUserId(userId)}
-          ref={nameInputRef}
-          returnKeyType="next"
-          onSubmitEditing={() =>
-            gradeInputRef.current && gradeInputRef.current.focus()
-          }
-          blurOnSubmit={false}
-        />
+
+        {userData.stu_grade != null && (
+          <TextInput
+            editable={false}
+            style={styles.textForm}
+            placeholder={userData.stu_grade.toString() + '학년'}
+            placeholderTextColor="black"
+            // onChangeText={(userId) => setUserId(userId)}
+            ref={nameInputRef}
+            returnKeyType="next"
+            onSubmitEditing={() =>
+              gradeInputRef.current && gradeInputRef.current.focus()
+            }
+            blurOnSubmit={false}
+          />
+        )}
       </View>
     </View>
   );
