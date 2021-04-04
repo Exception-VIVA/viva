@@ -19,12 +19,13 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 import RNPickerSelect, {defaultStyles} from 'react-native-picker-select';
+import {showMessage, hideMessage} from 'react-native-flash-message';
 
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
 
 const ProfileEditScreen = ({route, navigation}) => {
-  // const [stu_nick, stu_grade, stu_photo] = route.params;
+  const {stu_nick, stu_grade, stu_photo} = route.params;
 
   const preURL = require('../../preURL/preURL');
 
@@ -34,59 +35,51 @@ const ProfileEditScreen = ({route, navigation}) => {
   const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState('');
   const [userGrade, setUserGrade] = useState('');
-  const [userPhoto, setUserPhoto] = useState('');
+  const [userPhoto, setUserPhoto] = useState(stu_photo);
   const [filedata, setFiledata] = useState([]);
   const [isChangeImg, setisChangeImg] = useState(false);
+  const [userId, setuserId] = useState('');
 
   const getUserid = async () => {
     const userId = await AsyncStorage.getItem('user_id');
     return userId;
   };
 
-  const getUserdata = async (userId) => {
-    const response = await fetch(
-      preURL.preURL +
-        '/api/home?' +
-        new URLSearchParams({
-          stu_id: userId,
-        }),
-      {
-        method: 'GET',
-      },
-    );
+  // const getUserdata = async (userId) => {
+  //   const response = await fetch(
+  //     preURL.preURL +
+  //       '/api/home?' +
+  //       new URLSearchParams({
+  //         stu_id: userId,
+  //       }),
+  //     {
+  //       method: 'GET',
+  //     },
+  //   );
+  //
+  //   if (response.status === 200) {
+  //     const responseJson = await response.json();
+  //     return responseJson.data.retrievedUser;
+  //   } else {
+  //     throw new Error('unable to get your User');
+  //   }
+  // };
 
-    if (response.status === 200) {
-      const responseJson = await response.json();
-      return responseJson.data.retrievedUser;
-    } else {
-      throw new Error('unable to get your User');
-    }
-  };
-
-  const placeholder = {
-    label: '학년을 입력해주세요',
-    value: null,
-    color: '#9EA0A4',
-  };
-
-  const postImage = () => {
-    console.log('postImg');
-
+  const postImage = async () => {
     const fd = new FormData();
-
-    console.log('==postimage filedata==');
-    console.log(filedata);
+    // console.log('==postimage filedata==');
+    // console.log(filedata);
 
     fd.append('profile_img', {
       name: filedata.fileName,
       uri: filedata.uri,
       type: filedata.type,
     });
+    //
+    // console.log('====fd===');
+    // console.log(fd);
 
-    console.log('====fd===');
-    console.log(fd);
-
-    axios
+    await axios
       .post(preURL.preURL + '/api/user/profile/', fd, {
         headers: {
           'content-type': 'multipart/form-data',
@@ -95,30 +88,96 @@ const ProfileEditScreen = ({route, navigation}) => {
       .then((res) => {
         const response = res.data;
         console.log(response);
-        setUserPhoto(response.data.file.location);
         console.log('The file is successfully uploaded');
+        console.log(response.data.file.location);
+        setUserPhoto(response.data.file.location);
+        updateProfile(response.data.file.location);
       })
+
       .catch((err) => {
         console.log('에러...');
         console.error(err);
       });
   };
 
+  const updateProfile = (photo) => {
+    console.log('👕지금 보내려는 거...! ');
+    console.log(userName);
+    console.log(userGrade);
+    console.log(photo);
+
+    var dataToSend = {
+      stu_nick: userName,
+      stu_grade: userGrade,
+      stu_photo: photo,
+    };
+    var formBody = [];
+    for (var key in dataToSend) {
+      var encodedKey = encodeURIComponent(key);
+      var encodedValue = encodeURIComponent(dataToSend[key]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
+
+    fetch(preURL.preURL + '/api/user/profile/' + userId, {
+      method: 'PUT',
+      body: formBody,
+      headers: {
+        //Header Defination
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        //Hide Loader
+        setLoading(false);
+        console.log(responseJson);
+        // If server response message same as Data Matched
+        if (responseJson.status === 'success') {
+          console.log('update profile is Successful.');
+        } else {
+          console.log('update profile is fail..');
+        }
+      })
+      .catch((error) => {
+        //Hide Loader
+        setLoading(false);
+        console.error(error);
+      });
+  };
+
+  const completeEdit = async () => {
+    if (isChangeImg) {
+      const editedImg = await postImage();
+    } else {
+      updateProfile(userPhoto);
+    }
+
+    showMessage({
+      message: '프로필 정보가 수정되었습니다.',
+      type: 'default',
+      duration: 2500,
+      // autoHide: false,
+    });
+  };
+
   const getMultidata = async () => {
     const userId = await getUserid();
-    const userdata = await getUserdata(userId);
-    setUserName(userdata.stu_nick);
-    setUserGrade(userdata.stu_grade);
-    setUserPhoto(userdata.stu_photo);
+    setuserId(userId);
+    // setUserName(userdata.stu_nick);
+    // setUserGrade(userdata.stu_grade);
+    // setUserPhoto(userdata.stu_photo);
 
     setLoading(false);
 
-    return userdata;
+    return userId;
   };
 
   useEffect(() => {
-    console.log('==🧵route.params==');
-    console.log(route.params);
+    setUserName(stu_nick);
+    setUserPhoto(stu_photo);
+    setUserGrade(stu_grade);
+
     setLoading(true);
     getMultidata();
   }, []);
@@ -141,13 +200,6 @@ const ProfileEditScreen = ({route, navigation}) => {
           />
         </TouchableOpacity>
       ),
-      // headerRight: () => (
-      //   <TouchableOpacity
-      //     // style={{paddingRight: 20}}
-      //     onPress={() => {}}>
-      //     <Text style={styles.editbtn}>완료</Text>
-      //   </TouchableOpacity>
-      // ),
     });
   });
 
@@ -164,6 +216,29 @@ const ProfileEditScreen = ({route, navigation}) => {
   return (
     <View style={styles.container}>
       <Loader loading={loading} />
+
+      <View
+        style={{
+          height: hp(3),
+          justifyContent: 'center',
+          alignItems: 'flex-end',
+          marginTop: hp(2),
+        }}>
+        <TouchableOpacity
+          // style={{
+          //   width: 80,
+          //   height: 30,
+          //   backgroundColor: 'black',
+          //   justifyContent: 'center',
+          //   alignItems: 'center',
+          //   borderRadius: 200,
+          // }}
+          onPress={() => {
+            completeEdit();
+          }}>
+          <Text style={{fontSize: wp(4), color: 'black'}}>수정완료</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.imgContainer}>
         <Image source={{uri: userPhoto}} style={styles.profileimg} />
         <View style={styles.uploadBtn}>
@@ -215,7 +290,11 @@ const ProfileEditScreen = ({route, navigation}) => {
           useNativeAndroidPickerStyle={false}
           style={pickerSelectStyles}
           onValueChange={(userGrade) => setUserGrade(userGrade)}
-          placeholder={placeholder}
+          placeholder={{
+            label: '학년을 선택해주세요',
+            value: stu_grade,
+            color: 'black',
+          }}
           items={[
             {label: '1학년', value: 1},
             {label: '2학년', value: 2},
@@ -223,27 +302,27 @@ const ProfileEditScreen = ({route, navigation}) => {
           ]}
         />
 
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginTop: hp(2),
-          }}>
-          <TouchableOpacity
-            style={{
-              width: 100,
-              height: 40,
-              backgroundColor: 'black',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderRadius: 200,
-            }}
-            onPress={() => {
-              postImage();
-            }}>
-            <Text style={{fontSize: wp(3.5), color: 'white'}}>수정완료</Text>
-          </TouchableOpacity>
-        </View>
+        {/*<View*/}
+        {/*  style={{*/}
+        {/*    justifyContent: 'center',*/}
+        {/*    alignItems: 'center',*/}
+        {/*    marginTop: hp(2),*/}
+        {/*  }}>*/}
+        {/*  <TouchableOpacity*/}
+        {/*    style={{*/}
+        {/*      width: 100,*/}
+        {/*      height: 40,*/}
+        {/*      backgroundColor: 'black',*/}
+        {/*      justifyContent: 'center',*/}
+        {/*      alignItems: 'center',*/}
+        {/*      borderRadius: 200,*/}
+        {/*    }}*/}
+        {/*    onPress={() => {*/}
+        {/*      postImage();*/}
+        {/*    }}>*/}
+        {/*    <Text style={{fontSize: wp(3.5), color: 'white'}}>수정완료</Text>*/}
+        {/*  </TouchableOpacity>*/}
+        {/*</View>*/}
       </View>
     </View>
   );

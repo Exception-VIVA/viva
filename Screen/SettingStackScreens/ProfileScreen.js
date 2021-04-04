@@ -1,5 +1,5 @@
 import React, {useState, createRef, useLayoutEffect, useEffect} from 'react';
-
+import {useIsFocused} from '@react-navigation/native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -20,6 +20,13 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 
 const ProfileScreen = ({navigation}) => {
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    setLoading(true);
+    getMultidata();
+    // Put Your Code Here Which You Want To Refresh or Reload on Coming Back to This Screen.
+  }, [isFocused]);
   const preURL = require('../../preURL/preURL');
 
   const nameInputRef = createRef();
@@ -90,19 +97,20 @@ const ProfileScreen = ({navigation}) => {
 
       <View
         style={{
+          height: hp(3),
           justifyContent: 'center',
           alignItems: 'flex-end',
           marginTop: hp(2),
         }}>
         <TouchableOpacity
-          style={{
-            width: 80,
-            height: 30,
-            backgroundColor: 'black',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 200,
-          }}
+          // style={{
+          //   width: 80,
+          //   height: 30,
+          //   backgroundColor: 'black',
+          //   justifyContent: 'center',
+          //   alignItems: 'center',
+          //   borderRadius: 200,
+          // }}
           onPress={() => {
             navigation.navigate('ProfileEdit', {
               stu_nick: userData.stu_nick,
@@ -110,7 +118,9 @@ const ProfileScreen = ({navigation}) => {
               stu_photo: userData.stu_photo,
             });
           }}>
-          <Text style={{fontSize: wp(3.5), color: 'white'}}>수정하기</Text>
+          {/*<Text style={{fontSize: wp(3.5), color: 'white'}}>수정하기</Text>*/}
+
+          <Icon name="create-outline" size={30} />
         </TouchableOpacity>
       </View>
       <View style={styles.imgContainer}>

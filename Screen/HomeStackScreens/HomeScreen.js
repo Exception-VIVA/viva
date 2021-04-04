@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useRef, useLayoutEffect} from 'react';
+import {useIsFocused} from '@react-navigation/native';
 
 import {
   widthPercentageToDP as wp,
@@ -64,6 +65,14 @@ const createincorNoteData = [
 ];
 
 const HomeScreen = ({navigation}) => {
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    setLoading(true);
+    getMultidata();
+    // Put Your Code Here Which You Want To Refresh or Reload on Coming Back to This Screen.
+  }, [isFocused]);
+
   const preURL = require('../../preURL/preURL');
 
   const [userData, setUserData] = useState([]);
