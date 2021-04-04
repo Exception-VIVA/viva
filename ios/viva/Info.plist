@@ -4,6 +4,8 @@
 <dict>
 	<key></key>
 	<string></string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>갤러리 접근 허용이 필요합니다.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>카메라 접근 허용이 필요합니다.</string>
 	<key>CFBundleDevelopmentRegion</key>

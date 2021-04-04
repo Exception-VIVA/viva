@@ -20,17 +20,23 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 import RNPickerSelect, {defaultStyles} from 'react-native-picker-select';
 
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import axios from 'axios';
+
 const ProfileEditScreen = ({route, navigation}) => {
+  // const [stu_nick, stu_grade, stu_photo] = route.params;
+
   const preURL = require('../../preURL/preURL');
 
   const nameInputRef = createRef();
   const gradeInputRef = createRef();
 
-  const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState('');
   const [userGrade, setUserGrade] = useState('');
   const [userPhoto, setUserPhoto] = useState('');
+  const [filedata, setFiledata] = useState([]);
+  const [isChangeImg, setisChangeImg] = useState(false);
 
   const getUserid = async () => {
     const userId = await AsyncStorage.getItem('user_id');
@@ -63,6 +69,41 @@ const ProfileEditScreen = ({route, navigation}) => {
     color: '#9EA0A4',
   };
 
+  const postImage = () => {
+    console.log('postImg');
+
+    const fd = new FormData();
+
+    console.log('==postimage filedata==');
+    console.log(filedata);
+
+    fd.append('profile_img', {
+      name: filedata.fileName,
+      uri: filedata.uri,
+      type: filedata.type,
+    });
+
+    console.log('====fd===');
+    console.log(fd);
+
+    axios
+      .post(preURL.preURL + '/api/user/profile/', fd, {
+        headers: {
+          'content-type': 'multipart/form-data',
+        },
+      })
+      .then((res) => {
+        const response = res.data;
+        console.log(response);
+        setUserPhoto(response.data.file.location);
+        console.log('The file is successfully uploaded');
+      })
+      .catch((err) => {
+        console.log('에러...');
+        console.error(err);
+      });
+  };
+
   const getMultidata = async () => {
     const userId = await getUserid();
     const userdata = await getUserdata(userId);
@@ -76,6 +117,7 @@ const ProfileEditScreen = ({route, navigation}) => {
   };
 
   useEffect(() => {
+    console.log('==🧵route.params==');
     console.log(route.params);
     setLoading(true);
     getMultidata();
@@ -99,19 +141,25 @@ const ProfileEditScreen = ({route, navigation}) => {
           />
         </TouchableOpacity>
       ),
-      headerRight: () => (
-        <TouchableOpacity
-          // style={{paddingRight: 20}}
-          onPress={() => {
-            {
-              navigation.navigate('ProfileEdit');
-            }
-          }}>
-          <Text style={styles.editbtn}>완료</Text>
-        </TouchableOpacity>
-      ),
+      // headerRight: () => (
+      //   <TouchableOpacity
+      //     // style={{paddingRight: 20}}
+      //     onPress={() => {}}>
+      //     <Text style={styles.editbtn}>완료</Text>
+      //   </TouchableOpacity>
+      // ),
     });
-  }, []);
+  });
+
+  useEffect(() => {
+    console.log('🙂filedata');
+    console.log(filedata);
+  }, [filedata]);
+
+  useEffect(() => {
+    console.log('👑userPhoto');
+    console.log(userPhoto);
+  }, [userPhoto]);
 
   return (
     <View style={styles.container}>
@@ -122,7 +170,24 @@ const ProfileEditScreen = ({route, navigation}) => {
           <TouchableOpacity
             // style={{paddingRight: 20}}
             onPress={() => {
-              // navigation.navigate('ProfileEdit');
+              launchImageLibrary(
+                {
+                  mediaType: 'photo',
+                  includeBase64: false,
+                  maxHeight: 200,
+                  maxWidth: 200,
+                },
+                (response) => {
+                  console.log('==response==');
+                  console.log(response);
+
+                  if (response.didCancel != true) {
+                    setFiledata(response);
+                    setUserPhoto(response.uri);
+                    setisChangeImg(true);
+                  }
+                },
+              );
             }}>
             <Icon name="image-outline" size={25} />
           </TouchableOpacity>
@@ -157,6 +222,28 @@ const ProfileEditScreen = ({route, navigation}) => {
             {label: '3학년', value: 3},
           ]}
         />
+
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: hp(2),
+          }}>
+          <TouchableOpacity
+            style={{
+              width: 100,
+              height: 40,
+              backgroundColor: 'black',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 200,
+            }}
+            onPress={() => {
+              postImage();
+            }}>
+            <Text style={{fontSize: wp(3.5), color: 'white'}}>수정완료</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );

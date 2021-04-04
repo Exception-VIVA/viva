@@ -72,21 +72,47 @@ const ProfileScreen = ({navigation}) => {
     navigation.setOptions({
       headerTitleAlign: 'left',
       headerTitle: () => <Text style={styles.title}>마이 VIVA</Text>,
-      headerRight: () => (
-        <TouchableOpacity
-          // style={{paddingRight: 20}}
-          onPress={() => {
-            navigation.navigate('ProfileEdit');
-          }}>
-          <Text style={styles.editbtn}>수정하기</Text>
-        </TouchableOpacity>
-      ),
+      // headerRight: () => (
+      //   <TouchableOpacity
+      //     // style={{paddingRight: 20}}
+      //     onPress={() => {
+      //       navigation.navigate('ProfileEdit');
+      //     }}>
+      //     <Text style={styles.editbtn}>수정하기</Text>
+      //   </TouchableOpacity>
+      // ),
     });
   }, []);
 
   return (
     <View style={styles.container}>
       <Loader loading={loading} />
+
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'flex-end',
+          marginTop: hp(2),
+        }}>
+        <TouchableOpacity
+          style={{
+            width: 80,
+            height: 30,
+            backgroundColor: 'black',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 200,
+          }}
+          onPress={() => {
+            navigation.navigate('ProfileEdit', {
+              stu_nick: userData.stu_nick,
+              stu_grade: userData.stu_grade,
+              stu_photo: userData.stu_photo,
+            });
+          }}>
+          <Text style={{fontSize: wp(3.5), color: 'white'}}>수정하기</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.imgContainer}>
         <Image source={{uri: userData.stu_photo}} style={styles.profileimg} />
       </View>
