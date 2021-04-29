@@ -1,5 +1,5 @@
 import {PropTypes} from 'prop-types';
-import React, {PureComponent} from 'react';
+import React, {PureComponent, useEffect} from 'react';
 import {
   ActivityIndicator,
   Animated,
@@ -26,6 +26,8 @@ import {
 } from 'react-native-responsive-screen';
 import AutoHeightImage from 'react-native-auto-height-image';
 import {ScrollView} from 'react-native-gesture-handler';
+import axios from 'axios';
+import preURL from '../../preURL/preURL';
 
 export default class MarkScreen extends PureComponent {
   static propTypes = {
@@ -142,6 +144,42 @@ export default class MarkScreen extends PureComponent {
   componentWillUnmount() {
     clearTimeout(this.imageProcessorTimeout);
   }
+
+  postImages = async () => {
+    const fd = new FormData();
+    // console.log('==postimage filedata==');
+    // console.log(filedata);
+
+    this.state.preparedImgages.forEach((image) =>
+      fd.append('mark', {
+        name: image,
+        uri: image,
+        type: 'image/jpeg',
+      }),
+    );
+
+    console.log('====fd===');
+    console.log(fd);
+
+    await axios
+      .post('http://192.168.0.3:3001' + '/api/paper-upload/', fd, {
+        headers: {
+          'content-type': 'multipart/form-data',
+        },
+      })
+      .then((res) => {
+        const response = res.data;
+        console.log(response.data.files);
+        console.log('The paper images is successfully uploaded');
+        // setUserPhoto(response.data.file.location);
+        // updateProfile(response.data.file.location);
+      })
+
+      .catch((err) => {
+        console.log('에러...');
+        console.error(err);
+      });
+  };
 
   // Called after the device gets setup. This lets you know some platform specifics
   // like if the device has a camera or flash, or even if you have permission to use the
@@ -368,8 +406,7 @@ export default class MarkScreen extends PureComponent {
                 style={styles.completebtn}
                 onPress={() => {
                   {
-                    this.props.navigation.replace('Home');
-                    //🧤수정 필요
+                    this.postImages();
                   }
                 }}>
                 <Text style={{color: 'black', fontSize: wp(4.5)}}>완료</Text>
@@ -430,13 +467,13 @@ export default class MarkScreen extends PureComponent {
         feedbackState: false,
         preparedImgages: [
           ...this.state.preparedImgages,
-          this.state.currentImage,
+          'file://' + this.state.currentImage,
         ],
         isScanned: true,
       });
 
-      // console.log('====this.state.preparedImgages===');
-      // console.log(this.state.preparedImgages);
+      console.log('====this.state.preparedImgages===');
+      console.log(this.state.preparedImgages);
       // console.log('====this.state.isScanned===');
       // console.log(this.state.isScanned);
     }

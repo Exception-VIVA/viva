@@ -76,8 +76,8 @@ const ProfileEditScreen = ({route, navigation}) => {
       type: filedata.type,
     });
     //
-    // console.log('====fd===');
-    // console.log(fd);
+    console.log('====fd===');
+    console.log(fd);
 
     await axios
       .post(preURL.preURL + '/api/user/profile/', fd, {
