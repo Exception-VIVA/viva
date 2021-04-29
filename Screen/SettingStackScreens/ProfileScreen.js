@@ -120,7 +120,7 @@ const ProfileScreen = ({navigation}) => {
           }}>
           {/*<Text style={{fontSize: wp(3.5), color: 'white'}}>수정하기</Text>*/}
 
-          <Icon name="create-outline" size={30} />
+          <Icon name="create-outline" size={25} />
         </TouchableOpacity>
       </View>
       <View style={styles.imgContainer}>

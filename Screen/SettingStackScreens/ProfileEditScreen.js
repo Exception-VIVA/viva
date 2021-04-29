@@ -101,10 +101,10 @@ const ProfileEditScreen = ({route, navigation}) => {
   };
 
   const updateProfile = (photo) => {
-    console.log('👕지금 보내려는 거...! ');
-    console.log(userName);
-    console.log(userGrade);
-    console.log(photo);
+    // console.log('👕지금 보내려는 거...! ');
+    // console.log(userName);
+    // console.log(userGrade);
+    // console.log(photo);
 
     var dataToSend = {
       stu_nick: userName,
