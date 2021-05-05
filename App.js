@@ -27,6 +27,7 @@ import MarkScreen from './Screen/HomeStackScreens/MarkScreen';
 import MarkResultScreen from './Screen/HomeStackScreens/MarkResultScreen';
 import MarkResultSaveScreen from './Screen/HomeStackScreens/MarkResultSaveScreen';
 
+import TestScreen from './Screen/TestStackScreens/TestScreen';
 import TestCreateScreen from './Screen/TestStackScreens/TestCreateScreen';
 import TestReadScreen from './Screen/TestStackScreens/TestReadScreen';
 import ProfileScreen from './Screen/SettingStackScreens/ProfileScreen';
@@ -127,6 +128,7 @@ const SettingStackScreen = () => {
 const TestStackScreen = () => {
   return (
     <Stack.Navigator>
+      <TestStack.Screen name="Test" component={TestScreen} />
       <TestStack.Screen name="TestCreate" component={TestCreateScreen} />
       <TestStack.Screen name="TestRead" component={TestReadScreen} />
     </Stack.Navigator>

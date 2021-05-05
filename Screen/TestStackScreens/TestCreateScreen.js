@@ -1,4 +1,4 @@
-import React, {useState, createRef} from 'react';
+import React, {useState, createRe, useLayoutEffect, useEffect} from 'react';
 
 import {
   widthPercentageToDP as wp,
@@ -9,31 +9,78 @@ import 'react-native-gesture-handler';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
+import Icon from 'react-native-vector-icons/dist/Ionicons';
 
 const TestCreateScreen = ({navigation}) => {
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitleAlign: 'left',
+      headerTitle: () => (
+        <Text style={styles.title}>미니 모의고사 생성하기</Text>
+      ),
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => {
+            {
+              navigation.goBack();
+            }
+          }}>
+          <Icon
+            name="chevron-back-outline"
+            size={33}
+            style={{paddingLeft: 10}}
+          />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Text>this is TestCreateScreen</Text>
-      <View style={styles.btnArea}>
-        <TouchableOpacity
-          style={styles.btn}
-          onPress={() => {
-            AsyncStorage.clear();
-            navigation.replace('Auth');
-          }}>
-          <Text style={{color: 'white'}}>LOGOUT</Text>
-        </TouchableOpacity>
+      <View style={styles.topdesc}>
+        <Text style={{fontSize: wp(4), fontWeight: 'bold'}}>
+          난이도와 오답노트를 선택해주세요
+        </Text>
+        <Text style={{fontSize: wp(3.5), paddingTop: hp(1.5)}}>
+          나의 오답노트를 기반으로,
+        </Text>
+        <Text style={{fontSize: wp(3.5), paddingTop: hp(0.5)}}>
+          나만의 맞춤 미니 모의고사를 제공받을 수 있어요!
+        </Text>
       </View>
 
-      <View style={styles.btnArea}>
-        <TouchableOpacity
-          style={styles.btn}
-          onPress={() => {
-            AsyncStorage.clear();
-            navigation.navigate('TestRead');
-          }}>
-          <Text style={{color: 'white'}}>테스트스크린으로</Text>
-        </TouchableOpacity>
+      <View style={styles.levelcontainer}>
+        <Text style={{fontSize: wp(5), fontWeight: 'bold'}}>난이도</Text>
+
+        <View style={styles.btnContainer}>
+          <View style={{height: 40, marginTop: hp(1)}}>
+            <TouchableOpacity style={styles.btn}>
+              <Text>상</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={{height: 40, marginTop: hp(1)}}>
+            <TouchableOpacity style={styles.btn}>
+              <Text>중</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={{height: 40, marginTop: hp(1)}}>
+            <TouchableOpacity style={styles.btn}>
+              <Text>하</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.notecontainer}>
+        <Text style={{fontSize: wp(5), fontWeight: 'bold'}}>오답노트</Text>
+      </View>
+
+      <View style={styles.notecontainer}>
+        <Text style={{fontSize: wp(5), fontWeight: 'bold'}}>
+          미니모의고사 이름
+        </Text>
       </View>
     </View>
   );
@@ -46,78 +93,45 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingLeft: wp(7),
     paddingRight: wp(7),
+    // justifyContent: 'center',
+  },
+
+  title: {
+    fontSize: wp(4),
+    fontWeight: 'bold',
+    paddingLeft: wp(2),
+  },
+  topdesc: {
     justifyContent: 'center',
+    marginTop: hp(3),
+    height: hp(10),
+    // backgroundColor: 'lightgrey',
   },
-  topArea: {
-    flex: 1,
-    paddingTop: wp(2),
-  },
-  titleArea: {
-    flex: 0.7,
-    justifyContent: 'center',
-    paddingTop: wp(3),
-  },
-  TextArea: {
-    flex: 0.3,
-    justifyContent: 'center',
-    backgroundColor: 'white',
-  },
-  Text: {
-    fontSize: wp('4%'),
-    paddingBottom: wp('1%'),
-  },
-  TextValidation: {
-    fontSize: wp('4%'),
-    color: 'red',
-    paddingTop: wp(2),
-  },
-  TextRegister: {
-    fontSize: wp('3.5%'),
-    color: 'grey',
-    textDecorationLine: 'underline',
-    paddingTop: wp(2),
-  },
-  formArea: {
-    justifyContent: 'center',
-    // paddingTop: wp(10),
-    flex: 1.5,
-  },
-  textFormTop: {
-    borderWidth: 2,
-    borderBottomWidth: 1,
-    borderColor: 'black',
-    borderTopLeftRadius: 7,
-    borderTopRightRadius: 7,
-    width: '100%',
-    height: hp(6),
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  textFormBottom: {
-    borderWidth: 2,
-    borderTopWidth: 1,
-    borderColor: 'black',
-    borderBottomRightRadius: 7,
-    borderBottomLeftRadius: 7,
-    width: '100%',
-    height: hp(6),
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  btnArea: {
-    height: hp(8),
-    // backgroundColor: 'orange',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingBottom: hp(1.5),
+  levelcontainer: {
+    justifyContent: 'space-around',
+    marginTop: hp(3),
+    height: hp(10),
+    // backgroundColor: 'lightgrey',
   },
   btn: {
     flex: 1,
-    width: '100%',
-    borderRadius: 7,
+    width: wp(25),
+    borderRadius: 400,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'black',
+    borderWidth: 1,
+  },
+
+  btnContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: '50%',
+  },
+  notecontainer: {
+    justifyContent: 'space-around',
+    marginTop: hp(3),
+    height: hp(15),
+    backgroundColor: 'lightgrey',
   },
 });
 

@@ -88,6 +88,7 @@ const HomeScreen = ({navigation}) => {
 
   const refRBSheet = useRef();
   const createNoterefRBSheet = useRef();
+  const minitestSheet = useRef();
 
   const getUserid = async () => {
     const userId = await AsyncStorage.getItem('user_id');
@@ -303,7 +304,13 @@ const HomeScreen = ({navigation}) => {
 
   const academyItems = ({item}) => {
     return (
-      <TouchableOpacity style={styles.book}>
+      <TouchableOpacity
+        style={styles.book}
+        onPress={() => {
+          // console.log(userData);
+          setCurrentBook(item);
+          refRBSheet.current.open();
+        }}>
         <Image source={{uri: item.workbook_photo}} style={styles.bookimg} />
       </TouchableOpacity>
     );

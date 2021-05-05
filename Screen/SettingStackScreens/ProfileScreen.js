@@ -160,6 +160,17 @@ const ProfileScreen = ({navigation}) => {
           />
         )}
       </View>
+
+      <View style={styles.btnArea}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => {
+            AsyncStorage.clear();
+            navigation.replace('Auth');
+          }}>
+          <Text style={{color: 'white'}}>로그아웃</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -220,6 +231,21 @@ const styles = StyleSheet.create({
   formInfoTxt: {
     fontSize: wp(4),
     color: 'grey',
+  },
+  btnArea: {
+    height: hp(6),
+    // backgroundColor: 'orange',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: hp(1.5),
+  },
+  btn: {
+    flex: 1,
+    width: wp(25),
+    borderRadius: 400,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
   },
 });
 
