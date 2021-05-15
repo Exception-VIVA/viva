@@ -1,4 +1,10 @@
-import React, {useState, createRe, useLayoutEffect, useEffect} from 'react';
+import React, {
+  useState,
+  createRe,
+  useLayoutEffect,
+  useEffect,
+  useRef,
+} from 'react';
 
 import {
   widthPercentageToDP as wp,
@@ -8,7 +14,6 @@ import {
 import 'react-native-gesture-handler';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 
-import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 
 const TestCreateScreen = ({navigation}) => {
