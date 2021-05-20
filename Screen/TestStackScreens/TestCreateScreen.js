@@ -18,6 +18,7 @@ import Loader from '../Components/Loader';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 import AsyncStorage from '@react-native-community/async-storage';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {showMessage} from 'react-native-flash-message';
 
 const TestCreateScreen = ({navigation}) => {
   const preURL = require('../../preURL/preURL');
@@ -78,6 +79,68 @@ const TestCreateScreen = ({navigation}) => {
     } else {
       throw new Error('unable to get your Workbook');
     }
+  };
+
+  //모의고사 생성하기
+  //localhost:3001/api/test/form
+  // body : test_title
+  //         note_sn
+  //        stu_id
+  const createMinitest = (stuId) => {
+    console.log(value);
+    console.log(minitestName);
+    var dataToSend = {
+      stu_id: stuId,
+      test_title: minitestName,
+      note_sn: value,
+    };
+    var formBody = [];
+    for (var key in dataToSend) {
+      var encodedKey = encodeURIComponent(key);
+      var encodedValue = encodeURIComponent(dataToSend[key]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
+
+    fetch(preURL.preURL + '/api/test/form', {
+      method: 'POST',
+      body: formBody,
+      headers: {
+        //Header Defination
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        //Hide Loader
+        console.log(responseJson);
+        // If server response message same as Data Matched
+        if (responseJson.status === 'success') {
+          setLoading(false);
+          console.log('✨create minitest is Successful.');
+          showMessage({
+            message: '미니모의고사가 생성되었습니다.',
+            type: 'default',
+            duration: 2500,
+            // autoHide: false,
+          });
+        } else {
+          setLoading(false);
+          console.log('create minitest is fail..');
+        }
+      })
+      .catch((error) => {
+        //Hide Loader
+        setLoading(false);
+        console.error(error);
+      });
+  };
+
+  const createMiniTestFull = async () => {
+    setLoading(true);
+    const userId = await getUserid();
+    const what = await createMinitest(userId);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -159,7 +222,7 @@ const TestCreateScreen = ({navigation}) => {
         <TouchableOpacity
           style={[styles.btn]}
           onPress={() => {
-            navigation.navigate('TestRead');
+            createMiniTestFull();
           }}>
           <Text style={{fontSize: wp(4), fontWeight: 'bold', color: 'white'}}>
             생성하기
@@ -229,33 +292,6 @@ const styles = StyleSheet.create({
     height: 50,
     paddingLeft: 10,
     paddingRight: 10,
-  },
-});
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 7,
-    width: '100%',
-    height: hp(6),
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-
-  inputAndroid: {
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 7,
-    color: 'black',
-    height: hp(6),
-    width: wp(86),
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  iconContainer: {
-    top: 10,
-    right: 12,
   },
 });
 

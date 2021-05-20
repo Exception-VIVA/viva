@@ -30,6 +30,7 @@ import MarkResultSaveScreen from './Screen/HomeStackScreens/MarkResultSaveScreen
 import TestScreen from './Screen/TestStackScreens/TestScreen';
 import TestCreateScreen from './Screen/TestStackScreens/TestCreateScreen';
 import TestReadScreen from './Screen/TestStackScreens/TestReadScreen';
+import TestReadEachScreen from './Screen/TestStackScreens/TestReadEachScreen';
 import ProfileScreen from './Screen/SettingStackScreens/ProfileScreen';
 import ProfileEditScreen from './Screen/SettingStackScreens/ProfileEditScreen';
 
@@ -131,6 +132,7 @@ const TestStackScreen = () => {
       <TestStack.Screen name="Test" component={TestScreen} />
       <TestStack.Screen name="TestCreate" component={TestCreateScreen} />
       <TestStack.Screen name="TestRead" component={TestReadScreen} />
+      <TestStack.Screen name="TestReadEach" component={TestReadEachScreen} />
     </Stack.Navigator>
   );
 };
