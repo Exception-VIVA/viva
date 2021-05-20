@@ -21,6 +21,7 @@
     "react": "16.13.1",
     "react-native": "0.63.4",
     "react-native-auto-height-image": "3.2.4",
+    "react-native-dropdown-picker": "5.1.15",
     "react-native-flash-message": "0.1.22",
     "react-native-fs": "2.16.6",
     "react-native-gesture-handler": "1.10.0",

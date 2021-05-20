@@ -24,6 +24,12 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 
 const TestScreen = ({navigation}) => {
+  const preURL = require('../../preURL/preURL');
+  const [incorNoteData, setIncorNoteData] = useState([]);
+  const [incorNoteList, setIncorNoteList] = useState([
+    {label: '학년을 선택헤주세요', value: 0},
+  ]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitleAlign: 'left',
@@ -51,7 +57,7 @@ const TestScreen = ({navigation}) => {
           <TouchableOpacity
             style={styles.btn}
             onPress={() => {
-              navigation.replace('TestCreate');
+              navigation.navigate('TestCreate');
             }}>
             <Text style={{fontSize: wp(4.5), fontWeight: 'bold'}}>
               모의고사 생성

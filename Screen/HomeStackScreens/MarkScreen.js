@@ -18,8 +18,7 @@ import Scanner, {
   Filters,
   RectangleOverlay,
 } from 'react-native-rectangle-scanner';
-// import {Image} from 'react-native-svg';
-import RNFS from 'react-native-fs';
+
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -474,8 +473,6 @@ export default class MarkScreen extends PureComponent {
 
       console.log('====this.state.preparedImgages===');
       console.log(this.state.preparedImgages);
-      // console.log('====this.state.isScanned===');
-      // console.log(this.state.isScanned);
     }
   };
 
