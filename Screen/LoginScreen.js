@@ -89,6 +89,8 @@ const LoginScreen = ({navigation}) => {
           navigation.replace('MainTab');
         } else {
           setErrortext('아이디와 비밀번호를 다시 확인해주세요');
+          setLoading(false);
+
           console.log('Please check your id or password');
         }
       })
@@ -193,7 +195,7 @@ const styles = StyleSheet.create({
     paddingTop: wp(2),
   },
   TextRegister: {
-    fontSize: wp('3.5%'),
+    fontSize: wp('4%'),
     color: 'grey',
     textDecorationLine: 'underline',
     paddingTop: wp(2),

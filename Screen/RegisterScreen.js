@@ -35,6 +35,9 @@ const RegisterScreen = (props) => {
   const [errortext2, setErrortext2] = useState('');
   const [isRegistraionSuccess, setIsRegistraionSuccess] = useState(false);
 
+  const userPhoto =
+    'https://viva-s3-capstone.s3.ap-northeast-2.amazonaws.com/profile_default.png';
+
   const idInputRef = createRef();
   const gradeInputRef = createRef();
   const passwordInputRef = createRef();
@@ -79,6 +82,7 @@ const RegisterScreen = (props) => {
       stu_id: userId,
       stu_grade: userGrade,
       stu_pw: userPassword,
+      stu_photo: userPhoto,
     };
     var formBody = [];
     for (var key in dataToSend) {

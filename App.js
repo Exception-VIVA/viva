@@ -102,7 +102,13 @@ const HomeStackScreen = ({navigation, route}) => {
           headerTitle: '',
         })}
       />
-      <HomeStack.Screen name="MarkResult" component={MarkResultScreen} />
+      <HomeStack.Screen
+        name="MarkResult"
+        component={MarkResultScreen}
+        options={({navigation, route}) => ({
+          headerLeft: null,
+        })}
+      />
       <HomeStack.Screen
         name="MarkResultSave"
         component={MarkResultSaveScreen}
@@ -114,13 +120,7 @@ const HomeStackScreen = ({navigation, route}) => {
 const SettingStackScreen = () => {
   return (
     <Stack.Navigator>
-      <SettingStack.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          headerBackTitleVisible: false,
-        }}
-      />
+      <SettingStack.Screen name="Profile" component={ProfileScreen} />
       <SettingStack.Screen name="ProfileEdit" component={ProfileEditScreen} />
     </Stack.Navigator>
   );

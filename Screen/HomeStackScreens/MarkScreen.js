@@ -1,17 +1,15 @@
 import {PropTypes} from 'prop-types';
-import React, {PureComponent, useEffect} from 'react';
+import React, {PureComponent} from 'react';
 import {
   ActivityIndicator,
   Animated,
   Dimensions,
   Platform,
   SafeAreaView,
-  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Scanner, {
@@ -26,7 +24,6 @@ import {
 import AutoHeightImage from 'react-native-auto-height-image';
 import {ScrollView} from 'react-native-gesture-handler';
 import axios from 'axios';
-import preURL from '../../preURL/preURL';
 
 export default class MarkScreen extends PureComponent {
   static propTypes = {
@@ -79,6 +76,7 @@ export default class MarkScreen extends PureComponent {
       currentImage: '',
       preparedImgages: [],
       isScanned: false,
+      s3Links: [],
     };
 
     this.camera = React.createRef();
@@ -146,8 +144,6 @@ export default class MarkScreen extends PureComponent {
 
   postImages = async () => {
     const fd = new FormData();
-    // console.log('==postimage filedata==');
-    // console.log(filedata);
 
     this.state.preparedImgages.forEach((image) =>
       fd.append('mark', {
@@ -157,9 +153,6 @@ export default class MarkScreen extends PureComponent {
       }),
     );
 
-    console.log('====fd===');
-    console.log(fd);
-
     await axios
       .post('http://192.168.0.3:3001' + '/api/paper-upload/', fd, {
         headers: {
@@ -168,16 +161,22 @@ export default class MarkScreen extends PureComponent {
       })
       .then((res) => {
         const response = res.data;
-        console.log(response.data.files);
+        // console.log(response.data.files);
+        this.setState({
+          s3Links: response.data.files,
+        });
         console.log('The paper images is successfully uploaded');
-        // setUserPhoto(response.data.file.location);
-        // updateProfile(response.data.file.location);
       })
 
       .catch((err) => {
         console.log('에러...');
         console.error(err);
       });
+
+    this.props.navigation.navigate('MarkResult', {
+      book_sn: this.state.book_sn,
+      preparedImgages: this.state.s3Links,
+    });
   };
 
   // Called after the device gets setup. This lets you know some platform specifics
@@ -289,10 +288,8 @@ export default class MarkScreen extends PureComponent {
       currentImage: croppedImage,
     });
 
-    console.log('===initialImage===');
-    console.log(initialImage);
-    console.log('===croppedImage===');
-    console.log(croppedImage);
+    // console.log('===croppedImage===');
+    // console.log(croppedImage);
   };
 
   // Flashes the screen on capture

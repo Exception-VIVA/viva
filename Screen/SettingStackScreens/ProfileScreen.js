@@ -79,15 +79,6 @@ const ProfileScreen = ({navigation}) => {
     navigation.setOptions({
       headerTitleAlign: 'left',
       headerTitle: () => <Text style={styles.title}>마이 VIVA</Text>,
-      // headerRight: () => (
-      //   <TouchableOpacity
-      //     // style={{paddingRight: 20}}
-      //     onPress={() => {
-      //       navigation.navigate('ProfileEdit');
-      //     }}>
-      //     <Text style={styles.editbtn}>수정하기</Text>
-      //   </TouchableOpacity>
-      // ),
     });
   }, []);
 
