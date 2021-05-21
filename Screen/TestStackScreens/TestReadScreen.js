@@ -13,23 +13,29 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
-  ScrollView,
   SafeAreaView,
-  Image,
   Platform,
+  PermissionsAndroid,
 } from 'react-native';
 
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {showMessage} from 'react-native-flash-message';
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import Share from 'react-native-share';
 
 const TestReadScreen = ({navigation}) => {
   const preURL = require('../../preURL/preURL');
   const [loading, setLoading] = useState(false);
-  const [incorPbData, setIncorPbData] = useState([]);
+  const [testListData, setTestListData] = useState([]); //미니모의고사 리스트
+  const [testpbdata, setTestpbdata] = useState([]); //각각 미니모의고사 안의 문제
+  const [curTestindex, setCurTestindex] = useState([]);
 
-  const [delTestindex, setDelTestindex] = useState([]);
+  const [result, setResult] = useState('');
+  const [fileURL, setFileURL] = useState('');
+  const [filePath, setFilePath] = useState('');
+
   const delNoterefRBSheet = useRef();
 
   const getUserid = async () => {
@@ -39,7 +45,7 @@ const TestReadScreen = ({navigation}) => {
 
   //미니모의고사 가져오기
   //localhost:3001/api/test/list?stu_id=samdol
-  const getIncorPbdata = async (userId) => {
+  const getTestListdata = async (userId) => {
     const response = await fetch(
       preURL.preURL +
         '/api/test/list?' +
@@ -64,12 +70,12 @@ const TestReadScreen = ({navigation}) => {
     }
   };
 
-  const getIncorPbdataFull = async () => {
+  const getTestListdataFull = async () => {
     setLoading(true);
     const userId = await getUserid();
-    const incorpbData = await getIncorPbdata(userId);
+    const testListdata = await getTestListdata(userId);
 
-    setIncorPbData(incorpbData);
+    setTestListData(testListdata);
     setLoading(false);
   };
 
@@ -113,8 +119,8 @@ const TestReadScreen = ({navigation}) => {
 
     const userId = await getUserid();
     const what = await delTest(userId, test_sn);
-    const incorpbData = await getIncorPbdata(userId);
-    setIncorPbData(incorpbData);
+    const testListdata = await getTestListdata(userId);
+    setTestListData(testListdata);
 
     setLoading(false);
 
@@ -126,9 +132,179 @@ const TestReadScreen = ({navigation}) => {
     });
   };
 
+  //localhost:3001/api/test/list/download?test_sn=18&stu_id=samdol
+  const getTestPbdata = async (userId, test_sn) => {
+    const response = await fetch(
+      preURL.preURL +
+        '/api/test/list/download?' +
+        new URLSearchParams({
+          test_sn: test_sn,
+          stu_id: userId,
+        }),
+      {
+        method: 'GET',
+      },
+    );
+    if (response.status === 200) {
+      const responseJson = await response.json();
+      if (responseJson.status === 'success') {
+        console.log('====fetch return result====');
+        console.log(responseJson.data.pbs_img);
+        return responseJson.data.pbs_img;
+      } else if (responseJson.status === 'null') {
+        return [];
+      }
+    } else {
+      throw new Error('unable to get your Workbook');
+    }
+  };
+
+  const isPermitted = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'External Storage Write Permission',
+            message: 'App needs access to Storage data',
+          },
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        alert('Write permission err', err);
+        return false;
+      }
+    } else {
+      return true;
+    }
+  };
+
+  const shareToFiles = async (URL) => {
+    const pre = 'data:application/pdf;base64,';
+    console.log(pre + URL);
+    const shareOptions = {
+      title: 'Share file',
+      url: pre + URL, // base64 with mimeType or path to local file
+    };
+
+    // If you want, you can use a try catch, to parse
+    // the share response. If the user cancels, etc.
+    try {
+      const ShareResponse = await Share.open(shareOptions);
+      setResult(JSON.stringify(ShareResponse, null, 2));
+    } catch (error) {
+      console.log('Error =>', error);
+      // setResult('error: '.concat(getErrorString(error)));
+    }
+  };
+
+  const createPDF = async (source) => {
+    console.log('createPDF 함수까지 옴');
+    if (await isPermitted()) {
+      const options = {
+        html: source,
+        fileName: 'test',
+        directory: 'Documents',
+        base64: true,
+      };
+      const file = await RNHTMLtoPDF.convert(options);
+      console.log(file.filePath);
+      console.log(file.base64);
+      setFilePath(file.filePath);
+      setFileURL(file.base64);
+
+      return file.base64;
+    }
+  };
+
+  const settingHTML = async (pb_img_Arr, test_title) => {
+    const source = `<div>
+   <script language="JavaScript"  type="text/javascript">
+  
+               
+        //문자열로 가져오기
+        var pb_img="${pb_img_Arr}"
+        
+        
+        //1. pb_img_arr
+        //.png, 기준으로 자른 후 마지막 빼고는 뒤에 .png다 붙여주기
+        var png=".png"
+        var pb_img_arr=pb_img.split(".png,");
+        
+        for(var i=0;i<pb_img_arr.length-1;i++){
+          pb_img_arr[i]=pb_img_arr[i].concat(png);
+        }
+        
+        //  document.write("===pb_img_arr===<br>");
+        //
+        // for(var i=0;i<pb_img_arr.length;i++){
+        //   document.write(pb_img_arr[i]+"<br>");
+        // }
+        //
+        
+        document.write(\`
+        <div style="width:100%; height: 55px; display:flex; align-items: center; justify-content: center" >
+        <span style="font-size: 20px"> \`+"${test_title}"+\`</span>
+        </div>\`);
+         
+        
+        for(var i=0;i<pb_img_arr.length;i++){
+          document.write(\`<div style="padding: 10px; width:50%; border-right: 1px dashed black; ">
+        <div style="padding-bottom: 10px">
+            <span style="font-size: 15px">문제 \`+(i+1)+\`</span>
+        </div>
+
+        <div style="padding-bottom: 30px;">\`+
+           \` <img src="\`+pb_img_arr[i]+\`" style="width: 95%;height: auto; border-radius: 5px; border: 0.5px solid black" />
+        </div>
+
+
+    </div>\` )
+         
+        }
+
+
+    </script>
+</div>`;
+
+    console.log(source);
+    return source;
+  };
+
+  const createPdfFull = async (test_sn, test_title) => {
+    setLoading(true);
+    const userId = await getUserid();
+    const testpbdata = await getTestPbdata(userId, test_sn);
+    setTestpbdata(testpbdata);
+
+    //배열 나눠주기
+    const pb_img_Arr = new Array();
+
+    for (var i = 0; i < testpbdata.length; i++) {
+      pb_img_Arr.push(testpbdata[i].pb_img);
+    }
+
+    const source = await settingHTML(pb_img_Arr, test_title);
+    const URL = await createPDF(source);
+    const what = await shareToFiles(URL);
+    setLoading(false);
+
+    showMessage({
+      message: '선택한 미니모의고사가 저장되었습니다.',
+      type: 'default',
+      duration: 2500,
+      // autoHide: false,
+    });
+  };
+
   useEffect(() => {
-    getIncorPbdataFull();
+    getTestListdataFull();
   }, []);
+
+  useEffect(() => {
+    console.log('💍💍💍💍각각 미니모의고사 안 문제 💍💍💍💍');
+    console.log(testpbdata);
+  }, [testpbdata]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -165,11 +341,10 @@ const TestReadScreen = ({navigation}) => {
             // style={{paddingRight: 20}}
             onPress={() => {
               {
-                // setDelPbindex(index);
-                // delNoterefRBSheet.current.open();
+                createPdfFull(item.test_sn, item.test_title);
               }
             }}>
-            <Icon name="file-tray-full-outline" size={25} />
+            <Icon name="download-outline" size={25} />
           </TouchableOpacity>
         </View>
 
@@ -178,7 +353,7 @@ const TestReadScreen = ({navigation}) => {
             // style={{paddingRight: 20}}
             onPress={() => {
               {
-                setDelTestindex(item.test_sn);
+                setCurTestindex(item.test_sn);
                 delNoterefRBSheet.current.open();
               }
             }}>
@@ -252,7 +427,7 @@ const TestReadScreen = ({navigation}) => {
                   style={styles.delbtn}
                   onPress={() => {
                     {
-                      delTestFull(delTestindex);
+                      delTestFull(curTestindex);
                       delNoterefRBSheet.current.close();
                     }
                   }}>
@@ -265,7 +440,7 @@ const TestReadScreen = ({navigation}) => {
 
         <FlatList
           horizontal={false}
-          data={incorPbData}
+          data={testListData}
           renderItem={incorPbItems}
           keyExtractor={(item, index) => index.toString()}
           ListEmptyComponent={emptyPb}

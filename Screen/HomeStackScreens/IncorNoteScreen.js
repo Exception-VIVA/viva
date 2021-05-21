@@ -71,7 +71,6 @@ const createincorNoteData = [
 const IncorNoteScreen = ({navigation}) => {
   const preURL = require('../../preURL/preURL');
 
-  const [filePath, setFilePath] = useState('');
   const [loading, setLoading] = useState(false);
   const [incorNoteData, setIncorNoteData] = useState([]);
   const [pbCountdata, setPbCountdata] = useState([]);
@@ -83,6 +82,7 @@ const IncorNoteScreen = ({navigation}) => {
   const [htmlinput, setHtmlinput] = useState('');
   const [result, setResult] = useState('');
   const [fileURL, setFileURL] = useState('');
+  const [filePath, setFilePath] = useState('');
 
   const delNoterefRBSheet = useRef();
   const updateNoterefRBSheet = useRef();
