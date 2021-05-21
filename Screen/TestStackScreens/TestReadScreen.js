@@ -132,6 +132,7 @@ const TestReadScreen = ({navigation}) => {
     });
   };
 
+  //각 미니모의고사 안 문제
   //localhost:3001/api/test/list/download?test_sn=18&stu_id=samdol
   const getTestPbdata = async (userId, test_sn) => {
     const response = await fetch(
@@ -301,11 +302,6 @@ const TestReadScreen = ({navigation}) => {
     getTestListdataFull();
   }, []);
 
-  useEffect(() => {
-    console.log('💍💍💍💍각각 미니모의고사 안 문제 💍💍💍💍');
-    console.log(testpbdata);
-  }, [testpbdata]);
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitleAlign: 'left',
@@ -333,7 +329,17 @@ const TestReadScreen = ({navigation}) => {
     return (
       <View style={styles.resultitem_container}>
         <View style={styles.resultitem_title}>
-          <Text style={{fontSize: wp(4.5)}}>{item.test_title}</Text>
+          <TouchableOpacity
+            onPress={() => {
+              {
+                navigation.navigate('TestReadEach', {
+                  test_sn: item.test_sn,
+                  test_title: item.test_title,
+                });
+              }
+            }}>
+            <Text style={{fontSize: wp(4.5)}}>{item.test_title}</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.btn_container}>

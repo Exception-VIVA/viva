@@ -201,7 +201,7 @@ const IncorNoteScreen = ({navigation}) => {
         
         document.write(\`
         <div style="width:100%; height: 55px; display:flex; align-items: center; justify-content: center" >
-        <span style="font-size: 20px">🔍 \`+"${note_name}"+\`</span>
+        <span style="font-size: 20px"> \`+"${note_name}"+\`</span>
         </div>\`);
          
         
