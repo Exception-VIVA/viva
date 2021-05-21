@@ -137,6 +137,11 @@ const TestCreateScreen = ({navigation}) => {
   };
 
   const createMiniTestFull = async () => {
+    if (value == null) {
+      alert('오답노트를 선택해주세요');
+      return;
+    }
+
     setLoading(true);
     const userId = await getUserid();
     const what = await createMinitest(userId);
