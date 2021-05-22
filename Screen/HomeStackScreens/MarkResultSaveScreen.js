@@ -243,38 +243,62 @@ const MarkResultSaveScreen = ({route, navigation}) => {
         var is_correct="${is_correct}"        
         const is_correct_arr=is_correct.split(',');
         
-        
+         
 
         var pb_code="${pb_code}"        
         const pb_code_arr=pb_code.split(',');
         
         
-        
-        document.write("===is_correct_arr===<br>");
-
-        for(var i=0;i<is_correct_arr.length;i++){
-          document.write(is_correct_arr[i]+"<br>");
-        }
-        
-        document.write("===pb_code_arr===<br>");
-
-        for(var i=0;i<pb_code_arr.length;i++){
-          document.write(pb_code_arr[i]+"<br>");
-        }
-        
-        
-        
-        
         document.write(\`
+        <div style="border : 1px solid; margin-bottom: 30px;">
         <div style="width:100%; height: 55px; display:flex; align-items: center; justify-content: center" >
-        <span style="font-size: 20px"> \`+"${test_title}"+\`</span>
-        </div>\`);
-         
+        <span style="font-size: 20px"> 채점결과 : \`+"${test_title}"+\`</span>
+        </div>
         
-        for(var i=0;i<page_img_arr.length;i++){
-          document.write(\`<div style="padding: 10px; width:50%; border-right: 1px dashed black; ">
+        <div style="width:100%; height: 25px; display:flex; align-items: center; justify-content: center; padding-bottom:20px" >
+        <span style="font-size: 15px"> 이름 : \`+"${userId}"+\`</span> &nbsp;&nbsp;&nbsp;
+        <span style="font-size: 15px">|</span> &nbsp;&nbsp;&nbsp;
+        <span style="font-size: 15px">날짜 : </span>2021-05-23</span>
+        </div>
+        </div>
+    
+       
+        \`);
+         
+        document.write(\`
+        <table style="border: 1px solid #444444;  width:100%; border-collapse:collapse;">
+        <thead>
+          <tr style=" border: 1px solid #444444;">
+          <th style=" border: 1px solid #444444;">문제번호</th><th>채점 결과</th>
+          </tr>
+        </thead>
+        
+        \`)
+        
+        for(let i=0;i<pb_code_arr.length;i++){
+            document.write(\`
+            <tr style=" border: 1px solid #444444;">
+            \`)
+            for(let j=0;j<2;j++){
+               document.write(\`
+                <td style=" border: 1px solid #444444; padding:5px; text-align:center">
+                \`);
+                
+                if(j==0){
+                document.write(pb_code_arr[i]);
+                }else{
+                document.write(is_correct_arr[i]);
+                }   
+            }
+            document.write('</tr>')
+        }
+        document.write('</table>');
+
+        
+        for(let i=0;i<page_img_arr.length;i++){
+          document.write(\` <div style="padding: 10px; width:100%;">
         <div style="padding-bottom: 10px">
-            <span style="font-size: 15px">문제 \`+(i+1)+\`</span>
+            <span style="font-size: 15px">page \`+(i+1)+\`</span>
         </div>
 
         <div style="padding-bottom: 30px;">\`+
@@ -306,7 +330,11 @@ const MarkResultSaveScreen = ({route, navigation}) => {
     var pb_code = '';
 
     for (var i = 0; i < markResults.length; i++) {
-      is_correct = is_correct.concat(',', markResults[i].is_correct);
+      if (markResults[i].is_correct) {
+        is_correct = is_correct.concat(',', 'O');
+      } else {
+        is_correct = is_correct.concat(',', 'X');
+      }
       pb_code = pb_code.concat(',', markResults[i].pb_code);
     }
 
