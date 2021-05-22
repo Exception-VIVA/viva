@@ -25,10 +25,6 @@ import Icon from 'react-native-vector-icons/dist/Ionicons';
 
 const TestScreen = ({navigation}) => {
   const preURL = require('../../preURL/preURL');
-  const [incorNoteData, setIncorNoteData] = useState([]);
-  const [incorNoteList, setIncorNoteList] = useState([
-    {label: '학년을 선택헤주세요', value: 0},
-  ]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -74,6 +70,19 @@ const TestScreen = ({navigation}) => {
             <Text
               style={{fontSize: wp(4.5), fontWeight: 'bold', color: 'white'}}>
               모의고사 보기
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.btnArea}>
+          <TouchableOpacity
+            style={[styles.btn, styles.filledbtn]}
+            onPress={() => {
+              navigation.navigate('MarkResultSave');
+            }}>
+            <Text
+              style={{fontSize: wp(4.5), fontWeight: 'bold', color: 'white'}}>
+              결과 저장 화면
             </Text>
           </TouchableOpacity>
         </View>

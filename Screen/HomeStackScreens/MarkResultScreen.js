@@ -29,25 +29,33 @@ const MarkResultScreen = ({route, navigation}) => {
   const [loading, setLoading] = useState(false);
   const [s3List, setS3List] = useState([]);
   const [markResults, setMarkResults] = useState([]);
+  const [incorrectPbs, setIncorrectPbs] = useState('');
+  const [incorrectPbs2, setIncorrectPbs2] = useState('');
 
+  const gosavepage = () => {
+    navigation.navigate('MarkResultSave', {
+      s3List: s3List,
+      markResults: markResults,
+      book_sn: book_sn,
+      incorrectPbs: incorrectPbs,
+    });
+  };
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitleAlign: 'left',
       headerTitle: () => <Text style={styles.title}>채점결과</Text>,
-      headerRight: () => (
-        <TouchableOpacity
-          style={{paddingRight: wp(10)}}
-          onPress={() => {
-            {
-              navigation.navigate('MarkResultSave', {
-                // stu_id: stuId,
-              });
-            }
-          }}>
-          {/*<Icon name="search-outline" size={25} />*/}
-          <Text style={styles.title}>다음</Text>
-        </TouchableOpacity>
-      ),
+      // headerRight: () => (
+      //   <TouchableOpacity
+      //     style={{paddingRight: wp(10)}}
+      //     onPress={() => {
+      //       {
+      //         gosavepage();
+      //       }
+      //     }}>
+      //     {/*<Icon name="search-outline" size={25} />*/}
+      //     <Text style={styles.title}>다음</Text>
+      //   </TouchableOpacity>
+      // ),
     });
   }, []);
 
@@ -59,6 +67,7 @@ const MarkResultScreen = ({route, navigation}) => {
     for (let i = 0; i < preparedImgages.length; i++) {
       s3List = s3List.concat(',', preparedImgages[i].location);
     }
+    setS3List(s3List);
     return s3List;
   };
 
@@ -91,17 +100,28 @@ const MarkResultScreen = ({route, navigation}) => {
           console.log(responseJson.data.to_front);
 
           var markResultList = [];
+          var incorrectPbList = '';
 
           for (let i = 0; i < responseJson.data.to_front.length; i++) {
+            if (responseJson.data.to_front[i].is_correct == false) {
+              incorrectPbList = incorrectPbList.concat(
+                ',',
+                responseJson.data.to_front[i].pb_sn,
+              );
+            }
+
             markResultList.push({
               pb_code: responseJson.data.to_front[i].pb_code,
               is_correct: responseJson.data.to_front[i].is_correct,
             });
           }
+          // incorrectPbList = incorrectPbList.substr(1);
 
           setMarkResults(markResultList);
+          setIncorrectPbs(incorrectPbList);
 
           setLoading(false);
+          return responseJson.data.to_front;
         } else {
           setLoading(false);
           console.log('yolo Mark is failed..');
@@ -130,8 +150,10 @@ const MarkResultScreen = ({route, navigation}) => {
     const s3List = await makes3List();
 
     const yoloresult = await markUsingYOLO(s3List);
+    console.log('==yoloresult');
+    console.log(yoloresult);
 
-    // const markresultList = await makeMarkResultList(markresult);
+    // const markresultList = await makeMarkResultList(yoloresult);
     // setMarkResults(markresultList);
     //2. 그링크들로 scoring
   };
@@ -140,11 +162,6 @@ const MarkResultScreen = ({route, navigation}) => {
     setLoading(true);
     markImages();
   }, []);
-
-  useEffect(() => {
-    console.log('🍟🍟🍟🍟markResult 확인!!🍟🍟🍟🍟');
-    console.log(markResults);
-  }, [markResults]);
 
   //flat list item
   const markResultItems = ({item, index}) => {
@@ -221,6 +238,20 @@ const MarkResultScreen = ({route, navigation}) => {
           />
         </View>
       )}
+
+      <View style={styles.createbtnContainer}>
+        <TouchableOpacity
+          style={styles.btn_round}
+          onPress={() => {
+            {
+              gosavepage();
+            }
+          }}>
+          <Text style={{fontSize: wp(4), fontWeight: 'bold', color: 'white'}}>
+            다음
+          </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -268,9 +299,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   flat_container: {
+    height: hp(60),
     paddingLeft: wp(7),
     paddingRight: wp(7),
-    marginBottom: wp(20),
+    marginBottom: wp(10),
   },
 
   tablerow: {
@@ -292,6 +324,20 @@ const styles = StyleSheet.create({
 
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  btn_round: {
+    height: wp(10),
+    width: wp(30),
+    borderRadius: 400,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    backgroundColor: 'black',
+  },
+  createbtnContainer: {
+    height: hp(10),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
