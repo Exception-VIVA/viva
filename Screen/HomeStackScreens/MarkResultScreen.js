@@ -265,13 +265,13 @@ const styles = StyleSheet.create({
     paddingRight: wp(7),
   },
   title: {
-    fontSize: wp('4%'),
+    fontSize: wp('5'),
     fontWeight: 'bold',
     paddingLeft: wp(4),
   },
 
   tablefont: {
-    fontSize: wp('4%'),
+    fontSize: wp('4.5%'),
     fontWeight: 'bold',
   },
 

@@ -159,7 +159,7 @@ const ProfileScreen = ({navigation}) => {
             AsyncStorage.clear();
             navigation.replace('Auth');
           }}>
-          <Text style={{color: 'white'}}>로그아웃</Text>
+          <Text style={{color: 'white', fontSize: wp(4.5)}}>로그아웃</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: wp(4),
+    fontSize: wp(5),
     fontWeight: 'bold',
     paddingLeft: wp(2),
   },
@@ -214,13 +214,13 @@ const styles = StyleSheet.create({
     height: hp(6),
     paddingRight: 10,
 
-    fontSize: wp(4),
+    fontSize: wp(4.5),
 
     marginBottom: 30,
   },
 
   formInfoTxt: {
-    fontSize: wp(4),
+    fontSize: wp(4.5),
     color: 'grey',
   },
   btnArea: {

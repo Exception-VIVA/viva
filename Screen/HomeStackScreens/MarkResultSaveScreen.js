@@ -483,6 +483,17 @@ const MarkResultSaveScreen = ({route, navigation}) => {
             저장하기
           </Text>
         </TouchableOpacity>
+
+        <View style={{width: wp(5)}} />
+        <TouchableOpacity
+          style={[styles.btn_round]}
+          onPress={() => {
+            navigation.replace('Home');
+          }}>
+          <Text style={{fontSize: wp(4), fontWeight: 'bold', color: 'white'}}>
+            홈으로
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -565,6 +576,7 @@ const styles = StyleSheet.create({
   },
 
   createbtnContainer: {
+    flexDirection: 'row',
     marginTop: hp(25),
     height: hp(10),
     justifyContent: 'center',

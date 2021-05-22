@@ -236,7 +236,7 @@ const ProfileEditScreen = ({route, navigation}) => {
           onPress={() => {
             completeEdit();
           }}>
-          <Text style={{fontSize: wp(4), color: 'black'}}>수정완료</Text>
+          <Text style={{fontSize: wp(4.5), color: 'black'}}>수정완료</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.imgContainer}>
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: wp(4),
+    fontSize: wp(5),
     fontWeight: 'bold',
   },
 
@@ -395,12 +395,12 @@ const styles = StyleSheet.create({
     width: '100%',
     height: hp(6),
     paddingRight: 10,
-    fontSize: wp(4),
+    fontSize: wp(4.5),
     marginBottom: 30,
   },
 
   formInfoTxt: {
-    fontSize: wp(4),
+    fontSize: wp(4.5),
     color: 'grey',
   },
 });

@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   ft_title2: {
-    fontSize: wp('4.5'),
+    fontSize: wp('5'),
     fontWeight: 'bold',
   },
   ft_pageIC: {

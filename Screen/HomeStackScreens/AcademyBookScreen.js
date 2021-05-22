@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   title: {
-    fontSize: wp('4%'),
+    fontSize: wp('5'),
     fontWeight: 'bold',
   },
 

@@ -36,11 +36,11 @@ const TestScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <View style={styles.topdesc}>
-        <Text style={{fontSize: wp(4), fontWeight: 'bold'}}>VIVA를 통해</Text>
-        <Text style={{fontSize: wp(4), fontWeight: 'bold'}}>
+        <Text style={{fontSize: wp(5), fontWeight: 'bold'}}>VIVA를 통해</Text>
+        <Text style={{fontSize: wp(5), fontWeight: 'bold'}}>
           나만의 미니모의고사를 만들어보세요.{' '}
         </Text>
-        <Text style={{fontSize: wp(3.5), paddingTop: hp(1.5)}}>
+        <Text style={{fontSize: wp(4), paddingTop: hp(1.5)}}>
           만들었던 미니 모의고사들을 모아볼 수도 있어요:)
         </Text>
       </View>
@@ -70,19 +70,6 @@ const TestScreen = ({navigation}) => {
             <Text
               style={{fontSize: wp(4.5), fontWeight: 'bold', color: 'white'}}>
               모의고사 보기
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.btnArea}>
-          <TouchableOpacity
-            style={[styles.btn, styles.filledbtn]}
-            onPress={() => {
-              navigation.navigate('MarkResultSave');
-            }}>
-            <Text
-              style={{fontSize: wp(4.5), fontWeight: 'bold', color: 'white'}}>
-              결과 저장 화면
             </Text>
           </TouchableOpacity>
         </View>
@@ -128,7 +115,7 @@ const styles = StyleSheet.create({
 
   btnL: {marginRight: 10},
   title: {
-    fontSize: wp(4),
+    fontSize: wp(5),
     fontWeight: 'bold',
     paddingLeft: wp(2),
   },

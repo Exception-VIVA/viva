@@ -181,13 +181,13 @@ const TestCreateScreen = ({navigation}) => {
     <View style={styles.container}>
       <Loader loading={loading} />
       <View style={styles.topdesc}>
-        <Text style={{fontSize: wp(4), fontWeight: 'bold'}}>
+        <Text style={{fontSize: wp(5), fontWeight: 'bold'}}>
           미니모의고사 이름과, 오답노트를 정해주세요
         </Text>
-        <Text style={{fontSize: wp(3.5), paddingTop: hp(1.5)}}>
+        <Text style={{fontSize: wp(4), paddingTop: hp(1.5)}}>
           나의 오답노트를 기반으로,
         </Text>
-        <Text style={{fontSize: wp(3.5), paddingTop: hp(0.5)}}>
+        <Text style={{fontSize: wp(4), paddingTop: hp(0.5)}}>
           나만의 맞춤 미니 모의고사를 제공받을 수 있어요!
         </Text>
       </View>
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: wp(4),
+    fontSize: wp(5),
     fontWeight: 'bold',
     paddingLeft: wp(2),
   },

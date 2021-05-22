@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: wp('4%'),
+    fontSize: wp('5'),
     fontWeight: 'bold',
   },
 

@@ -783,7 +783,7 @@ const styles = StyleSheet.create({
   },
 
   titleText: {
-    fontSize: wp(4),
+    fontSize: wp(5),
     fontWeight: 'bold',
   },
   txtArea: {
