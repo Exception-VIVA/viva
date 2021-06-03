@@ -447,9 +447,12 @@ const HomeScreen = ({navigation}) => {
                 style={styles.btnoutline}
                 onPress={() => {
                   {
+                    console.log('===currentBook.workbook_sn===');
+                    console.log(currentBook.workbook_sn);
                     navigation.navigate('Mark', {
                       currentBooksn: currentBook.workbook_sn,
                     });
+
                     refRBSheet.current.close();
                   }
                 }}>

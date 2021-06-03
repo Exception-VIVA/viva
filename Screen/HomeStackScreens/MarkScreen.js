@@ -84,6 +84,8 @@ export default class MarkScreen extends PureComponent {
   }
 
   componentDidMount() {
+    console.log('Mark param확인!!');
+    console.log(this.state.book_sn);
     if (this.state.didLoadInitialLayout && !this.state.isMultiTasking) {
       this.turnOnCamera();
     }
@@ -154,7 +156,7 @@ export default class MarkScreen extends PureComponent {
     );
 
     await axios
-      .post('http://192.168.0.3:3001' + '/api/paper-upload/', fd, {
+      .post('https://viva-capstone.herokuapp.com' + '/api/paper-upload/', fd, {
         headers: {
           'content-type': 'multipart/form-data',
         },
@@ -169,7 +171,7 @@ export default class MarkScreen extends PureComponent {
       })
 
       .catch((err) => {
-        console.log('에러...');
+        console.log('The paper images is failed ');
         console.error(err);
       });
 

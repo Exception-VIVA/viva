@@ -62,11 +62,13 @@ const MarkResultScreen = ({route, navigation}) => {
   const makes3List = async () => {
     var s3List = '';
 
-    s3List = s3List.concat(book_sn);
+    // s3List = s3List.concat(book_sn);
 
     for (let i = 0; i < preparedImgages.length; i++) {
       s3List = s3List.concat(',', preparedImgages[i].location);
     }
+
+    s3List = s3List.substr(1);
     setS3List(s3List);
     return s3List;
   };
@@ -74,6 +76,7 @@ const MarkResultScreen = ({route, navigation}) => {
   // http://192.168.0.3:3001/api/scoring
   const markUsingYOLO = async (s3List) => {
     var dataToSend = {
+      workbook_sn: book_sn,
       file_name: s3List,
     };
     var formBody = [];
@@ -159,6 +162,8 @@ const MarkResultScreen = ({route, navigation}) => {
   };
 
   useEffect(() => {
+    console.log('==booksn');
+    console.log(book_sn);
     setLoading(true);
     markImages();
   }, []);

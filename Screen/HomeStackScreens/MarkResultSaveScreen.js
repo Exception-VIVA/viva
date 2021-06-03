@@ -230,6 +230,7 @@ const MarkResultSaveScreen = ({route, navigation}) => {
     is_correct,
     pb_code,
     userId,
+    now,
   ) => {
     const source = `<div>
    <script language="JavaScript"  type="text/javascript">
@@ -258,7 +259,7 @@ const MarkResultSaveScreen = ({route, navigation}) => {
         <div style="width:100%; height: 25px; display:flex; align-items: center; justify-content: center; padding-bottom:20px" >
         <span style="font-size: 15px"> 이름 : \`+"${userId}"+\`</span> &nbsp;&nbsp;&nbsp;
         <span style="font-size: 15px">|</span> &nbsp;&nbsp;&nbsp;
-        <span style="font-size: 15px">날짜 : </span>2021-05-23</span>
+        <span style="font-size: 15px">날짜 : </span>\`+"${now}"+ \`</span>
         </div>
         </div>
     
@@ -347,6 +348,7 @@ const MarkResultSaveScreen = ({route, navigation}) => {
       is_correct,
       pb_code,
       userId,
+      now,
     );
     const URL = await createPDF(source, file_name);
     const what = await shareToFiles(URL);
@@ -381,6 +383,8 @@ const MarkResultSaveScreen = ({route, navigation}) => {
   };
 
   useEffect(() => {
+    console.log('==save screen==');
+    console.log(book_sn);
     setLoading(true);
     getMultidata();
     setLoading(false);
