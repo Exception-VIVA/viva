@@ -1,3 +1,5 @@
+> viva의 프론트엔드 리포지토리입니다.
+
 # 🥣 프로젝트 개요
 <img src="https://user-images.githubusercontent.com/55133794/121149497-ac2c8c80-c87d-11eb-9084-1a158cdecb50.png" width="200">
 
@@ -29,7 +31,7 @@
 
 <br/>
 
-# 🥣 프론트 엔드 기능 구현 사항
+# 🥣 프론트엔드 기능 구현 사항
 
 `React Native`를 이용하여 `프론트엔드`를 개발하였습니다.
 
