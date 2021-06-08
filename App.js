@@ -98,6 +98,7 @@ const HomeStackScreen = ({navigation, route}) => {
         name="Mark"
         component={MarkScreen}
         options={({navigation, route}) => ({
+          headerShown: true,
           headerTransparent: true,
           headerTitle: '',
         })}
