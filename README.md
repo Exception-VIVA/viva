@@ -1,9 +1,9 @@
- ⚠️ 현재 페이지는 VIVA의 `프론트엔드` repository입니다. <br/>
+ >⚠️ 현재 페이지는 VIVA의 `프론트엔드` repository입니다. <br/>
   아래 링크를 통해 VIVA의 다른 repositories를 확인해주세요 :)<br/>
-    - [Exception-VIVA organization](https://github.com/Exception-VIVA) : VIVA organization<br/>
-    - [VIVA_test](https://github.com/Exception-VIVA/VIVA_test) : Backend of VIVA with Node.js <br/>
-    - [VIVA_flask](https://github.com/Exception-VIVA/VIVA_flask) : Backend of VIVA for yolo embed <br/> 
-    - [VIVA_db](https://github.com/Exception-VIVA/VIVA_db) : Building Database using OpenCV and object detection
+ - [Exception-VIVA organization](https://github.com/Exception-VIVA) : VIVA organization<br/>
+- [VIVA_test](https://github.com/Exception-VIVA/VIVA_test) : Backend of VIVA with Node.js <br/>
+- [VIVA_flask](https://github.com/Exception-VIVA/VIVA_flask) : Backend of VIVA for yolo embed <br/>
+- [VIVA_db](https://github.com/Exception-VIVA/VIVA_db) : Building Database using OpenCV and object detection
 
 # 🥣 프로젝트 개요
 <img src="https://user-images.githubusercontent.com/55133794/121149497-ac2c8c80-c87d-11eb-9084-1a158cdecb50.png" width="170">
