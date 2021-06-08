@@ -1,4 +1,4 @@
-> ⚠️ 현재 페이지는 VIVA의 `프론트엔드` repository입니다. <br/>
+ ⚠️ 현재 페이지는 VIVA의 `프론트엔드` repository입니다. <br/>
   아래 링크를 통해 VIVA의 다른 repositories를 확인해주세요 :)<br/>
     - [Exception-VIVA organization](https://github.com/Exception-VIVA) : VIVA organization<br/>
     - [VIVA_test](https://github.com/Exception-VIVA/VIVA_test) : Backend of VIVA with Node.js <br/>
