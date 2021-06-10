@@ -34,6 +34,8 @@
 - 개인 데이터를 이용한 맞춤형 문제 추천
 
 
+> ✨[발표영상](https://www.youtube.com/watch?v=So_VJx2j5sw) 
+
 <br/>
 
 # 🥣 프론트엔드 기능 구현 사항
